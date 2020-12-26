@@ -6,9 +6,12 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -39,6 +42,9 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_welcome);
+
+        getWindow().setStatusBarColor(getColor(R.color.Black));
+        getWindow().setNavigationBarColor(getColor(R.color.Black));
 
         this.myLinearLayoutIndicators = findViewById(R.id.layoutIndicator);
         this.myConfirmButton = findViewById(R.id.confirm_button);
