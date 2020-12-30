@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     android:focusableInTouchMode="true"
     android:gravity="center"
-    tools:context=".sign.login.ui.login.LoginFragment">
+    tools:context=".sign.login.LoginFragment">
 
     <ScrollView
         android:layout_width="match_parent"

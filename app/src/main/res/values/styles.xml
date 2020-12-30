@@ -43,6 +43,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="loginButtonDisabled" parent="viewParent">
+        <item name="android:background">@drawable/button_background_light_green</item>
+        <item name="android:textColor">@color/White</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="spinnerHintText" parent="parent">
         <item name="android:textSize">@dimen/newsMoreTextSize</item>
         <item name="android:textColor">@color/LightGreen</item>
