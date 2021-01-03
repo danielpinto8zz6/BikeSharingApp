@@ -17,8 +17,9 @@ public class SignActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign);
 
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
-        String szToken = mySharedPreferences.getString("token", null);
+        //String szToken = mySharedPreferences.getString("token", null);
 
+        String szToken = null;
         if ((savedInstanceState == null) &&
             ((szToken == null) ||
              (szToken.isEmpty()))) {

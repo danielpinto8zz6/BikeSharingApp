@@ -9,12 +9,12 @@ import retrofit2.http.POST;
 
 public interface RestService {
 
-    @POST("/user")
+    @POST("/account/user")
     Call<Void> addUser(@Body User user);
 
-    @POST("/auth")
+    @POST("/auth/auth")
     Call<Token> authenticator(@Body User user);
 
-    @POST("/password")
+    @POST("/account/password")
     Call<String> forgetPassword(@Body User user);
 }

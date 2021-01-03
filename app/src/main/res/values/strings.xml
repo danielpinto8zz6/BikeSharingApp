@@ -10,5 +10,10 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
+    <string name="mapbox_access_token">pk.eyJ1IjoidGlhZ29waW50byIsImEiOiJja2pjeDQ1M3AwbGJlMnNuejU1MG5pM2swIn0.HZVePQ2iI5JduGHGlu-xLA</string>
 
+    <string name="action_settings">Settings</string>
+    <string name="main">Home</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
 </resources>
