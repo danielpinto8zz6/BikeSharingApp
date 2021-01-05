@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bikesharing.app.R;
 
-class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements HomeFragment {
 
     @Nullable
     @Override
@@ -19,5 +19,15 @@ class SettingsFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_settings, container, false);
+    }
+
+    @Override
+    public boolean allowBackPressed() {
+        return true;
+    }
+
+    @Override
+    public int getFragmentType() {
+        return HomeFragment.FRAGMENT_TYPE_SETTINGS;
     }
 }

@@ -22,7 +22,7 @@
             android:id="@+id/imageAccount"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="100dp"
+            android:layout_marginStart="55dp"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_account"

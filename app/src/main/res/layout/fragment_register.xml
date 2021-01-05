@@ -8,7 +8,8 @@
     android:background="@color/DarkGreen"
     android:focusableInTouchMode="true"
     android:gravity="center"
-    tools:context=".sign.register.RegisterFragment">
+    tools:context=".sign.register.RegisterFragment"
+    android:theme="@style/AppTheme">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -40,7 +41,8 @@
                     android:layout_height="200dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_login_hero" />
+                    android:src="@drawable/ic_login_hero"
+                    android:paddingLeft="50dp"/>
             </RelativeLayout>
 
             <androidx.cardview.widget.CardView
@@ -61,12 +63,15 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputName"
                         style="@style/parent"
-                        android:layout_marginTop="@dimen/loginViewsMargin">
+                        android:layout_marginTop="@dimen/loginViewsMargin"
+                        android:textColorHint="@color/Black">
 
                         <EditText
                             android:id="@+id/editTextName"
                             style="@style/modifiedEditText"
                             android:hint="Name"
+                            android:background="@color/White"
+                            android:textColor="@color/Gray"
                             android:inputType="textPersonName"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -74,12 +79,15 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputEmail"
                         style="@style/parent"
-                        android:layout_marginTop="@dimen/loginViewsMargin">
+                        android:layout_marginTop="@dimen/loginViewsMargin"
+                        android:textColorHint="@color/Black">
 
                         <EditText
                             android:id="@+id/editTextEmail"
                             style="@style/modifiedEditText"
                             android:hint="@string/prompt_email"
+                            android:background="@color/White"
+                            android:textColor="@color/Gray"
                             android:inputType="textEmailAddress"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -87,12 +95,15 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputPassword"
                         style="@style/parent"
-                        android:layout_marginTop="@dimen/loginViewsMargin">
+                        android:layout_marginTop="@dimen/loginViewsMargin"
+                        android:textColorHint="@color/Black">
 
                         <EditText
                             android:id="@+id/editTextPassword"
                             style="@style/modifiedEditText"
                             android:hint="@string/prompt_password"
+                            android:background="@color/White"
+                            android:textColor="@color/Gray"
                             android:inputType="textPassword"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -100,12 +111,15 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputPasswordCheck"
                         style="@style/parent"
-                        android:layout_marginTop="@dimen/loginViewsMargin">
+                        android:layout_marginTop="@dimen/loginViewsMargin"
+                        android:textColorHint="@color/Black">
 
                         <EditText
                             android:id="@+id/editTextPasswordCheck"
                             style="@style/modifiedEditText"
                             android:hint="Repeat Password"
+                            android:background="@color/White"
+                            android:textColor="@color/Gray"
                             android:inputType="textPassword"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>

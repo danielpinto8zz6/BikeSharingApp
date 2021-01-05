@@ -7,7 +7,9 @@
     android:layout_gravity="center"
     android:focusableInTouchMode="true"
     android:gravity="center"
-    tools:context=".sign.login.LoginFragment">
+    tools:context=".sign.login.LoginFragment"
+    android:background="@color/White"
+    android:theme="@style/AppTheme">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -39,19 +41,23 @@
                     android:layout_height="200dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_register_hero" />
+                    android:src="@drawable/ic_register_hero"
+                    android:paddingLeft="50dp"/>
             </RelativeLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputEmail"
                 style="@style/parent"
                 android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp">
+                android:layout_marginRight="40dp"
+                android:textColorHint="@color/Black">
 
                 <EditText
                     android:id="@+id/editTextEmail"
                     style="@style/modifiedEditText"
                     android:hint="@string/prompt_email"
+                    android:background="@color/White"
+                    android:textColor="@color/Gray"
                     android:inputType="textEmailAddress"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -60,12 +66,15 @@
                 android:id="@+id/textInputPassword"
                 style="@style/parent"
                 android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp">
+                android:layout_marginRight="40dp"
+                android:textColorHint="@color/Black">
 
                 <EditText
                     android:id="@+id/editTextPassword"
                     style="@style/modifiedEditText"
                     android:hint="@string/prompt_password"
+                    android:background="@color/White"
+                    android:textColor="@color/Gray"
                     android:inputType="textPassword"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>

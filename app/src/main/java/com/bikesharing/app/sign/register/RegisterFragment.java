@@ -25,17 +25,19 @@ import com.bikesharing.app.data.User;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
+import com.bikesharing.app.sign.SignFragment;
 import com.bikesharing.app.sign.login.LoginFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.SocketTimeoutException;
+import java.util.Objects;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RegisterFragment extends Fragment implements View.OnClickListener {
+public class RegisterFragment extends Fragment implements View.OnClickListener, SignFragment {
 
     private TextInputLayout textInputName;
     private TextInputLayout textInputEmail;
@@ -96,6 +98,34 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         textInputPasswordCheck = view.findViewById(R.id.textInputPasswordCheck);
         textInputPasswordCheck.getEditText().addTextChangedListener(new RegisterTextWatcher(textInputPasswordCheck));
+    }
+
+    @Override
+    public void onResume() {
+
+        clearForm();
+        super.onResume();
+    }
+
+    @Override
+    public boolean allowBackPressed() {
+        return true;
+    }
+
+    @Override
+    public void clearForm() {
+
+        Objects.requireNonNull(textInputName.getEditText()).getText().clear();
+        textInputName.setErrorEnabled(false);
+
+        Objects.requireNonNull(textInputEmail.getEditText()).getText().clear();
+        textInputEmail.setErrorEnabled(false);
+
+        Objects.requireNonNull(textInputPassword.getEditText()).getText().clear();
+        textInputPassword.setErrorEnabled(false);
+
+        Objects.requireNonNull(textInputPasswordCheck.getEditText()).getText().clear();
+        textInputPasswordCheck.setErrorEnabled(false);
     }
 
     @Override
@@ -198,7 +228,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_left, android.R.anim.fade_out)
-                .replace(R.id.fragment_container, myLoginFragment)
+                .replace(R.id.fragment_container, myLoginFragment, SignFragment.FRAGMENT_TAG)
                 .addToBackStack(null)
                 .commit();
     }

@@ -1,24 +1,18 @@
 package com.bikesharing.app.sign.login;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import android.animation.StateListAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,25 +25,26 @@ import android.widget.Toast;
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.Token;
 import com.bikesharing.app.data.User;
+import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
-import com.bikesharing.app.sign.SignActivity;
+import com.bikesharing.app.sign.SignFragment;
 import com.bikesharing.app.sign.forgot.ForgotPasswordFragment;
 import com.bikesharing.app.sign.register.RegisterFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.SocketTimeoutException;
+import java.util.Objects;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
-import br.com.simplepass.loading_button_lib.interfaces.OnAnimationEndListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class LoginFragment extends Fragment implements View.OnClickListener {
+public class LoginFragment extends Fragment implements View.OnClickListener, SignFragment {
 
     private TextInputLayout textInputEmail;
     private TextInputLayout textInputPassword;
@@ -74,7 +69,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -108,6 +102,29 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         textInputPassword = view.findViewById(R.id.textInputPassword);
         textInputPassword.getEditText().addTextChangedListener(new LoginFragment.LoginTextWatcher(textInputPassword));
     }
+
+    @Override
+    public boolean allowBackPressed() {
+        return false;
+    }
+
+    @Override
+    public void clearForm() {
+
+        Objects.requireNonNull(textInputEmail.getEditText()).getText().clear();
+        textInputEmail.setErrorEnabled(false);
+
+        Objects.requireNonNull(textInputPassword.getEditText()).getText().clear();
+        textInputPassword.setErrorEnabled(false);
+    }
+
+    @Override
+    public void onResume() {
+
+        clearForm();
+        super.onResume();
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -195,6 +212,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
                 SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
                 mySharedPreferences.edit().putString("token", response.body().getSzToken()).apply();
+
+                Intent myIntent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
+                myIntent.putExtra("EMAIL", textInputEmail.getEditText().getText().toString());
+
+                startActivity(myIntent);
+                getActivity().finish();
             }
 
             @Override
@@ -220,18 +243,20 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, android.R.anim.fade_out)
-                .replace(R.id.fragment_container, myRegisterFragment)
+                .replace(R.id.fragment_container, myRegisterFragment, SignFragment.FRAGMENT_TAG)
                 .addToBackStack(null)
                 .commit();
     }
 
     public void onForgotClick(){
 
+        clearForm();
+
         ForgotPasswordFragment myForgotFragment = new ForgotPasswordFragment();
 
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_left, android.R.anim.fade_out)
-                .replace(R.id.fragment_container, myForgotFragment)
+                .replace(R.id.fragment_container, myForgotFragment, SignFragment.FRAGMENT_TAG)
                 .addToBackStack(null)
                 .commit();
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorPrimary">@color/DarkGreen</item>
         <item name="colorPrimaryDark">@color/DarkGreen</item>
         <item name="colorAccent">@color/LightGreen</item>
@@ -34,7 +34,6 @@
 
     <style name="modifiedEditText" parent="parent">
         <item name="android:textSize">@dimen/newsMoreTextSize</item>
-        <item name="android:backgroundTint">@color/White</item>
     </style>
 
     <style name="loginButton" parent="viewParent">

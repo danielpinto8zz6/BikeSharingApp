@@ -16,12 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BikeSharingApp"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".home.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/Theme.BikeSharingApp.NoActionBar"></activity>
-        <activity android:name=".sign.SignActivity" />
-        <activity android:name=".WelcomeActivity">
+        <activity android:name=".home.HomeActivity" android:screenOrientation="portrait" />
+        <activity android:name=".sign.SignActivity" android:screenOrientation="portrait" />
+        <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
