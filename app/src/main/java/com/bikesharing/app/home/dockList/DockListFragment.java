@@ -77,8 +77,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
             this.myRecyclerView = view.findViewById(R.id.dock_recycler_view);
             this.mySwipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
 
-            this.mySwipeRefreshLayout.setOnRefreshListener(this::onLoad
-            );
+            this.mySwipeRefreshLayout.setOnRefreshListener(this::onLoad);
 
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
