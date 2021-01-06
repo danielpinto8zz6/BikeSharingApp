@@ -44,9 +44,14 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
 
     public void addAll(ArrayList<Dock> myDockDataset) {
 
-        for (Dock myDock: myDockDataset) {
+        for (Dock myDock : myDockDataset) {
             this.add(myDock);
         }
+    }
+
+    public void set(ArrayList<Dock> myDockDataset) {
+        this.myDockDataset = myDockDataset;
+        notifyDataSetChanged();
     }
 
     public void add(Dock myDock) {

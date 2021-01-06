@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/WhiteSmoke"
     android:orientation="vertical"
-    tools:context=".home.dockList.DockListFragment"
-    android:background="@color/WhiteSmoke">
+    tools:context=".home.dockList.DockListFragment">
 
     <TextView
         android:id="@+id/listTitle"
@@ -26,13 +26,19 @@
         android:layout_height="200dp"
         android:gravity="center"
         android:src="@drawable/list_choose"
-        app:layout_constraintTop_toBottomOf="@+id/listTitle"/>
+        app:layout_constraintTop_toBottomOf="@+id/listTitle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dock_recycler_view"
-        android:layout_width = "match_parent"
-        android:layout_height = "match_parent"
-        android:gravity="center"
-        app:layout_behavior = "@string/appbar_scrolling_view_behavior"
-        app:layout_constraintTop_toBottomOf="@+id/listImage"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dock_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintTop_toBottomOf="@+id/listImage" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

@@ -8,13 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.Dock;
@@ -26,6 +27,8 @@ import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.bikesharing.app.utils.PaginationScrollListener;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,6 +37,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
 
     private RecyclerView myRecyclerView;
     private DockRecyclerViewAdapter myDockRecyclerViewAdapter;
+    private SwipeRefreshLayout mySwipeRefreshLayout;
 
     private int nPage = 0;
     private static final int nSize = 10;
@@ -41,6 +45,8 @@ public class DockListFragment extends Fragment implements HomeFragment {
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
+
+    private String szToken;
 
     @Nullable
     @Override
@@ -59,16 +65,20 @@ public class DockListFragment extends Fragment implements HomeFragment {
         if (savedInstanceState == null) {
 
             SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("com.mycompany.myAppName", Context.MODE_PRIVATE);
-            String szToken = mySharedPreferences.getString("token", null);
+            this.szToken = mySharedPreferences.getString("token", null);
 
-            if ((szToken == null) ||
-                    (szToken.isEmpty())) {
+            if ((this.szToken == null) ||
+                    (this.szToken.isEmpty())) {
 
                 ((HomeActivity) getActivity()).displayErrorExitDialog("Token", "Missing Token");
                 return;
             }
 
             this.myRecyclerView = view.findViewById(R.id.dock_recycler_view);
+            this.mySwipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+
+            this.mySwipeRefreshLayout.setOnRefreshListener(() -> onLoad()
+            );
 
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
@@ -86,6 +96,8 @@ public class DockListFragment extends Fragment implements HomeFragment {
                 @Override
                 protected void loadMoreItems() {
                     isLoading = true;
+                    mySwipeRefreshLayout.setRefreshing(isLoading);
+
                     nPage += 1;
 
                     loadDocks(nPage, nSize, true, szToken);
@@ -110,10 +122,19 @@ public class DockListFragment extends Fragment implements HomeFragment {
             this.myRecyclerView.setItemAnimator(new DefaultItemAnimator());
             this.myRecyclerView.addItemDecoration(new DividerItemDecoration(myRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
-            loadDocks(this.nPage, this.nSize, true, szToken);
+            loadDocks(this.nPage, this.nSize, true, this.szToken);
         }
 
 
+    }
+
+    private void onLoad() {
+        nPage = 0;
+        myDockRecyclerViewAdapter.set(new ArrayList<>());
+
+        loadDocks(nPage, nSize, true, this.szToken);
+
+        mySwipeRefreshLayout.setRefreshing(false); // Disables the refresh icon
     }
 
     private void loadDocks(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
@@ -137,6 +158,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
                 myDockRecyclerViewAdapter.addAll(response.body().getContent());
 
                 isLoading = false;
+                mySwipeRefreshLayout.setRefreshing(isLoading);
             }
 
             @Override
