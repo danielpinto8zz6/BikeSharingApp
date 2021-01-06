@@ -1,21 +1,13 @@
 package com.bikesharing.app.sign;
 
-import androidx.annotation.Nullable;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
-
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 
 import com.bikesharing.app.R;
-import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.sign.login.LoginFragment;
-
-import java.util.List;
 
 public class SignActivity extends AppCompatActivity {
 
@@ -56,24 +48,16 @@ public class SignActivity extends AppCompatActivity {
         }
     }
 
-    private void displayLogoutDialog(){
+    private void displayLogoutDialog() {
 
         AlertDialog myDialog = new AlertDialog.Builder(this).create();
         myDialog.setTitle("Exit?");
         myDialog.setMessage("You want to exit?");
-        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        finishAndRemoveTask();
-                    }
-                });
-        myDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Back to app",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ok", (dialog, which) -> {
+            dialog.dismiss();
+            finishAndRemoveTask();
+        });
+        myDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Back to app", (dialog, which) -> dialog.dismiss());
 
         myDialog.show();
     }

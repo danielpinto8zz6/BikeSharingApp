@@ -1,7 +1,6 @@
 package com.bikesharing.app.home;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -55,15 +54,15 @@ public class HomeActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
 
             if ((this.szToken == null) ||
-                (this.szToken.isEmpty())) {
+                    (this.szToken.isEmpty())) {
 
                 displayErrorExitDialog("Token", "Missing Token");
                 return;
             }
 
-            String szEmail = getIntent().getStringExtra("EMAIL");
+            String szEmail = mySharedPreferences.getString("email", null);
             if ((szEmail == null) ||
-                (szEmail.isEmpty())) {
+                    (szEmail.isEmpty())) {
 
                 displayErrorExitDialog("Email", "Email Missing");
                 return;
@@ -117,7 +116,7 @@ public class HomeActivity extends AppCompatActivity {
                     return;
                 }
 
-                myUserInfo = new User(response.body().getUsername(),response.body().getPassword());
+                myUserInfo = new User(response.body().getUsername(), response.body().getPassword());
                 TextView myUsernameNameTextView = findViewById(R.id.welcomeUserName);
                 myUsernameNameTextView.setText(myUserInfo.getUsername());
             }
@@ -141,40 +140,29 @@ public class HomeActivity extends AppCompatActivity {
         return myUserInfo;
     }
 
-    public void displayErrorExitDialog(String szTitle, String szMessage){
+    public void displayErrorExitDialog(String szTitle, String szMessage) {
 
         AlertDialog myDialog = new AlertDialog.Builder(this).create();
         myDialog.setTitle(szTitle);
         myDialog.setMessage(szMessage);
-        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        finishAndRemoveTask();
-                        dialog.dismiss();
-                    }
-                });
+        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> {
+            finishAndRemoveTask();
+            dialog.dismiss();
+        });
 
         myDialog.show();
     }
 
-    private void displayLogoutDialog(){
+    private void displayLogoutDialog() {
 
         AlertDialog myDialog = new AlertDialog.Builder(this).create();
         myDialog.setTitle("Exit?");
         myDialog.setMessage("You want to exit?");
-        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        finishAndRemoveTask();
-                    }
-                });
-        myDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Back to app",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ok", (dialog, which) -> {
+            dialog.dismiss();
+            finishAndRemoveTask();
+        });
+        myDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Back to app", (dialog, which) -> dialog.dismiss());
 
         myDialog.show();
     }
@@ -205,7 +193,7 @@ public class HomeActivity extends AppCompatActivity {
             HomeFragment myHomeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.FRAGMENT_TAG);
 
             if ((myHomeFragment != null) &&
-                (myHomeFragment.getFragmentType() == nFragmentType)) {
+                    (myHomeFragment.getFragmentType() == nFragmentType)) {
                 return true;
             }
 

@@ -1,23 +1,20 @@
 package com.bikesharing.app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-
-import com.bikesharing.app.sign.SignActivity;
+import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.onboarding.OnboardingAdapter;
 import com.bikesharing.app.onboarding.OnboardingItem;
+import com.bikesharing.app.sign.SignActivity;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -37,7 +34,13 @@ public class WelcomeActivity extends AppCompatActivity {
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
         if (!mySharedPreferences.getBoolean("isFirstRun", true)) {
 
+            String token = mySharedPreferences.getString("token", null);
+///            if (token == null) {
             startActivity(new Intent(getApplicationContext(), SignActivity.class));
+///            } else {
+///                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+///            }
+
             finish();
         }
 
@@ -67,25 +70,21 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
-        this.myConfirmButton.setOnClickListener(new View.OnClickListener() {
+        this.myConfirmButton.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
+            if (myOnboardingViewPager.getCurrentItem() + 1 < myOnboardingAdapter.getItemCount()) {
+                myOnboardingViewPager.setCurrentItem(myOnboardingViewPager.getCurrentItem() + 1);
+            } else {
 
-                if (myOnboardingViewPager.getCurrentItem() + 1 < myOnboardingAdapter.getItemCount()) {
-                    myOnboardingViewPager.setCurrentItem(myOnboardingViewPager.getCurrentItem() + 1);
-                } else {
+                mySharedPreferences.edit().putBoolean("isFirstRun", false).apply();
 
-                    mySharedPreferences.edit().putBoolean("isFirstRun", false).apply();
-
-                    startActivity(new Intent(getApplicationContext(), SignActivity.class));
-                    finish();
-                }
+                startActivity(new Intent(getApplicationContext(), SignActivity.class));
+                finish();
             }
         });
     }
 
-    private void setupOnboardingItems(){
+    private void setupOnboardingItems() {
 
         List<OnboardingItem> myOnboardingItems = new ArrayList<>();
 
@@ -127,20 +126,20 @@ public class WelcomeActivity extends AppCompatActivity {
         this.myOnboardingAdapter = new OnboardingAdapter(this.getApplicationContext(), myOnboardingItems);
     }
 
-    private void setupOnboardingIndicators(){
+    private void setupOnboardingIndicators() {
 
         ImageView[] myIndicators = new ImageView[this.myOnboardingAdapter.getItemCount()];
         LinearLayout.LayoutParams myLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        myLayoutParams.setMargins(8,0,8,0);
+        myLayoutParams.setMargins(8, 0, 8, 0);
 
-        for (int nIndex = 0; nIndex < myIndicators.length; nIndex++){
+        for (int nIndex = 0; nIndex < myIndicators.length; nIndex++) {
 
             myIndicators[nIndex] = new ImageView(getApplicationContext());
             myIndicators[nIndex].setImageDrawable(
                     ContextCompat.getDrawable(getApplicationContext(),
-                    R.drawable.onboarding_indicator_inactive)
+                            R.drawable.onboarding_indicator_inactive)
             );
             myIndicators[nIndex].setLayoutParams(myLayoutParams);
             this.myLinearLayoutIndicators.addView(myIndicators[nIndex]);
@@ -150,7 +149,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private void setCurrentOnboardingIndicator(int nCurrentIndex) {
 
         int nChildCount = this.myLinearLayoutIndicators.getChildCount();
-        for (int nIndex = 0; nIndex < nChildCount; nIndex++){
+        for (int nIndex = 0; nIndex < nChildCount; nIndex++) {
 
             ImageView myImageView = (ImageView) this.myLinearLayoutIndicators.getChildAt(nIndex);
             if (nIndex == nCurrentIndex) {
