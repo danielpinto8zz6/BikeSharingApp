@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
@@ -23,9 +24,7 @@ import com.bikesharing.app.home.HomeFragment;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.bikesharing.app.utils.PaginationScrollListener;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,10 +35,12 @@ public class DockListFragment extends Fragment implements HomeFragment {
     private RecyclerView myRecyclerView;
     private DockRecyclerViewAdapter myDockRecyclerViewAdapter;
 
-    private ArrayList<Dock> myDockDataset = new ArrayList<>();
-
     private int nPage = 0;
-    private int nSize = 10;
+    private static final int nSize = 10;
+    private int nTotalPages = 1;
+
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
 
     @Nullable
     @Override
@@ -61,13 +62,11 @@ public class DockListFragment extends Fragment implements HomeFragment {
             String szToken = mySharedPreferences.getString("token", null);
 
             if ((szToken == null) ||
-                (szToken.isEmpty())) {
+                    (szToken.isEmpty())) {
 
-                ((HomeActivity)getActivity()).displayErrorExitDialog("Token", "Missing Token");
+                ((HomeActivity) getActivity()).displayErrorExitDialog("Token", "Missing Token");
                 return;
             }
-
-            getDockList(this.nPage, this.nSize, true, szToken);
 
             this.myRecyclerView = view.findViewById(R.id.dock_recycler_view);
 
@@ -83,14 +82,42 @@ public class DockListFragment extends Fragment implements HomeFragment {
             this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter();
             this.myRecyclerView.setAdapter(this.myDockRecyclerViewAdapter);
 
+            myRecyclerView.addOnScrollListener(new PaginationScrollListener(myLayoutManager) {
+                @Override
+                protected void loadMoreItems() {
+                    isLoading = true;
+                    nPage += 1;
+
+                    loadDocks(nPage, nSize, true, szToken);
+                }
+
+                @Override
+                public int getTotalPageCount() {
+                    return nTotalPages;
+                }
+
+                @Override
+                public boolean isLastPage() {
+                    return nPage == nTotalPages;
+                }
+
+                @Override
+                public boolean isLoading() {
+                    return isLoading;
+                }
+            });
+
             this.myRecyclerView.setItemAnimator(new DefaultItemAnimator());
             this.myRecyclerView.addItemDecoration(new DividerItemDecoration(myRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
+
+            loadDocks(this.nPage, this.nSize, true, szToken);
         }
 
 
     }
 
-    private void getDockList(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
+    private void loadDocks(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
+        Toast.makeText(getContext(), "Loading docks", Toast.LENGTH_SHORT);
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
         Call<Page<Dock>> myReturnedUser = myRestService.getAllDocks(nPage, nSize, bOnlyBikes, "Bearer " + szToken);
@@ -102,16 +129,19 @@ public class DockListFragment extends Fragment implements HomeFragment {
 
                 if (!response.isSuccessful()) {
 
-                    ((HomeActivity)getActivity()).displayErrorExitDialog("Error", HttpStatus.getStatusText(response.code()));
+                    ((HomeActivity) getActivity()).displayErrorExitDialog("Error", HttpStatus.getStatusText(response.code()));
                     return;
                 }
 
+                nTotalPages = (int) response.body().getTotalPages();
                 myDockRecyclerViewAdapter.addAll(response.body().getContent());
+
+                isLoading = false;
             }
 
             @Override
             public void onFailure(Call<Page<Dock>> call, Throwable t) {
-                ((HomeActivity)getActivity()).displayErrorExitDialog("Error", t.getMessage());
+                ((HomeActivity) getActivity()).displayErrorExitDialog("Error", t.getMessage());
             }
         });
     }

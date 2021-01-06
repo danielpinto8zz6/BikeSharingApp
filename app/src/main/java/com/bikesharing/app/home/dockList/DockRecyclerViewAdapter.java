@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerViewAdapter.MyViewHolder> {
 
-    private ArrayList<Dock> myDockDataset = new ArrayList<Dock>();
+    private ArrayList<Dock> myDockDataset = new ArrayList<>();
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -40,10 +40,6 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public DockRecyclerViewAdapter() {
-    }
-
-    public ArrayList<Dock> getDataset() {
-        return myDockDataset;
     }
 
     public void addAll(ArrayList<Dock> myDockDataset) {

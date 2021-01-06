@@ -212,9 +212,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Sig
 
                 SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
                 mySharedPreferences.edit().putString("token", response.body().getSzToken()).apply();
+                mySharedPreferences.edit().putString("email", textInputEmail.getEditText().getText().toString()).apply();
 
                 Intent myIntent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
-                myIntent.putExtra("EMAIL", textInputEmail.getEditText().getText().toString());
 
                 startActivity(myIntent);
                 getActivity().finish();
