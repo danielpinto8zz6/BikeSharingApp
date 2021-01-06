@@ -375,7 +375,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
             if (!textInputPassword.getEditText().getText().toString().trim().equalsIgnoreCase(textInputPasswordCheck.getEditText().getText().toString().trim())) {
 
-                textInputPasswordCheck.setError("Password Not Equal!");
+                textInputPasswordCheck.setError("Passwords Not Equal!");
                 if (bIsFocus) {
                     requestFocus(textInputPasswordCheck.getEditText());
                 }

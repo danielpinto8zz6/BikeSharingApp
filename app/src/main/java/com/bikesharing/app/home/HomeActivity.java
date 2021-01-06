@@ -2,30 +2,21 @@ package com.bikesharing.app.home;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import com.bikesharing.app.data.Token;
 import com.bikesharing.app.data.User;
+import com.bikesharing.app.home.dockList.DockListFragment;
+import com.bikesharing.app.home.settings.SettingsFragment;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
-import com.bikesharing.app.sign.SignActivity;
-import com.bikesharing.app.sign.SignFragment;
-import com.bikesharing.app.sign.login.LoginFragment;
-import com.bikesharing.app.sign.register.RegisterFragment;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.view.MenuItem;
@@ -33,11 +24,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bikesharing.app.R;
-
-import java.net.SocketTimeoutException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +34,7 @@ import retrofit2.Response;
 public class HomeActivity extends AppCompatActivity {
 
     private User myUserInfo;
+    private String szToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +43,19 @@ public class HomeActivity extends AppCompatActivity {
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR  | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         window.setStatusBarColor(getColor(R.color.DarkGreen));
         window.setNavigationBarColor(getColor(R.color.White));
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
-        String szToken = mySharedPreferences.getString("token", null);
+        this.szToken = mySharedPreferences.getString("token", null);
 
         if (savedInstanceState == null) {
 
-            if ((szToken == null) ||
-                (szToken.isEmpty())) {
+            if ((this.szToken == null) ||
+                (this.szToken.isEmpty())) {
 
                 displayErrorExitDialog("Token", "Missing Token");
                 return;
@@ -80,14 +69,14 @@ public class HomeActivity extends AppCompatActivity {
                 return;
             }
 
-            getUserInfo(szEmail, szToken);
+            getRestUserInfo(szEmail, szToken);
 
             BottomNavigationView myBottomNavigationView = findViewById(R.id.bottomMenu);
             myBottomNavigationView.setOnNavigationItemSelectedListener(new OnNavigationItemSelected());
 
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, android.R.anim.fade_out)
-                    .add(R.id.fragment_home_container, new BikeListFragment(), HomeFragment.FRAGMENT_TAG)
+                    .add(R.id.fragment_home_container, new DockListFragment(), HomeFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
         }
@@ -103,14 +92,16 @@ public class HomeActivity extends AppCompatActivity {
             return;
         }
 
-        if (myHomeFragment.allowBackPressed()) { // and then you define a method allowBackPressed with the logic to allow back pressed or not
-            super.onBackPressed();
-        } else {
+        if (!myHomeFragment.allowBackPressed()) { // and then you define a method allowBackPressed with the logic to allow back pressed or not
+
             displayLogoutDialog();
+            return;
         }
+
+        super.onBackPressed();
     }
 
-    private void getUserInfo(String szEmail, String szToken) {
+    private void getRestUserInfo(String szEmail, String szToken) {
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
         Call<User> myReturnedUser = myRestService.getUserByEmail(szEmail, "Bearer " + szToken);
@@ -138,7 +129,19 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    protected void displayErrorExitDialog(String szTitle , String szMessage){
+    public String getToken() {
+        return szToken;
+    }
+
+    public void setUserInfo(User myUserInfo) {
+        this.myUserInfo = myUserInfo;
+    }
+
+    public User getUserInfo() {
+        return myUserInfo;
+    }
+
+    public void displayErrorExitDialog(String szTitle, String szMessage){
 
         AlertDialog myDialog = new AlertDialog.Builder(this).create();
         myDialog.setTitle(szTitle);
@@ -187,7 +190,7 @@ public class HomeActivity extends AppCompatActivity {
 
             switch (nId) {
                 case R.id.menuMain:
-                    nFragmentType = HomeFragment.FRAGMENT_TYPE_BIKE_LIST;
+                    nFragmentType = HomeFragment.FRAGMENT_TYPE_DOCK_LIST;
                     break;
                 case R.id.menuSettings:
                     nFragmentType = HomeFragment.FRAGMENT_TYPE_SETTINGS;
@@ -207,8 +210,8 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             Fragment myNewFragment;
-            if (nFragmentType == HomeFragment.FRAGMENT_TYPE_BIKE_LIST) {
-                myNewFragment = new BikeListFragment();
+            if (nFragmentType == HomeFragment.FRAGMENT_TYPE_DOCK_LIST) {
+                myNewFragment = new DockListFragment();
             } else {
                 myNewFragment = new SettingsFragment();
             }

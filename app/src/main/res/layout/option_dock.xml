@@ -10,7 +10,7 @@
     android:padding="10dp">
 
         <TextView
-            android:id="@+id/dockLocation_"
+            android:id="@+id/dockLocation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Rua de Teste"
@@ -21,36 +21,36 @@
             />
 
         <TextView
-            android:id="@+id/numberOfBikes_"
+            android:id="@+id/numberOfBikes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Bikes Available:"
             android:textColor="@color/Gray"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dockLocation_"
+            app:layout_constraintTop_toBottomOf="@id/dockLocation"
             />
 
         <TextView
-            android:id="@+id/distance_"
+            android:id="@+id/distance"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Distance:"
             android:textColor="@color/Gray"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/numberOfBikes_"
+            app:layout_constraintTop_toBottomOf="@id/numberOfBikes"
             />
 
         <TextView
-            android:id="@+id/distance_time_"
+            android:id="@+id/distance_time"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Estimated Time:"
             android:textColor="@color/Gray"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/distance_"
+            app:layout_constraintTop_toBottomOf="@id/distance"
             />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -155,6 +155,8 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
         myRecoverButton.revertAnimation();
         myRecoverButton.startAnimation();
 
+
+        //TODO forgetPassword
         RestService myRestService = RestServiceManager.getInstance().getRestService();
         Call<String> myReturnedUser = myRestService.forgetPassword(new User(textInputEmail.getEditText().getText().toString()));
 

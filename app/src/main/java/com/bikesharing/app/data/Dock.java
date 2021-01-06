@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Dock {
 
+    @SerializedName("id")
+    private int id;
+
     @SerializedName("latitude")
     private long latitude;
 
@@ -16,11 +19,20 @@ public class Dock {
     @SerializedName("bikeid")
     private int bikeId;
 
-    public Dock(long latitude, long longitude, String location, int bikeId) {
+    public Dock(int id, long latitude, long longitude, String location, int bikeId) {
+        this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.location = location;
         this.bikeId = bikeId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public long getLatitude() {
@@ -53,5 +65,20 @@ public class Dock {
 
     public void setBikeId(int bikeId) {
         this.bikeId = bikeId;
+    }
+
+    //TODO getDistance
+    public long getDistance() {
+        return latitude;
+    }
+
+    //TODO getDistanceTime
+    public long getDistanceTime() {
+        return latitude;
+    }
+
+    //Todo numberOfBikes
+    public int getNumberOfBikes() {
+        return bikeId;
     }
 }

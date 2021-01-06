@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".home.dockList.DockListFragment"
+    android:background="@color/WhiteSmoke">
+
+    <TextView
+        android:id="@+id/listTitle"
+        style="@style/viewParent.headerText.NoMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="SELECT BIKE"
+        android:textColor="@color/DarkGreen"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/listImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:gravity="center"
+        android:src="@drawable/list_choose"
+        app:layout_constraintTop_toBottomOf="@+id/listTitle"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dock_recycler_view"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:gravity="center"
+        app:layout_behavior = "@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toBottomOf="@+id/listImage"/>
+</LinearLayout>

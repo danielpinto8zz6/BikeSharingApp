@@ -2,6 +2,7 @@ package com.bikesharing.app.data;
 
 import com.google.gson.annotations.SerializedName;
 
+//TODO add email
 public class User {
 
     @SerializedName("username")
