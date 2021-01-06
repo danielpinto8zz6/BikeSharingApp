@@ -56,7 +56,7 @@ public class HomeActivity extends AppCompatActivity {
 
             this.szToken = mySharedPreferences.getString("token", null);
             if ((this.szToken == null) ||
-                (this.szToken.isEmpty())) {
+                    (this.szToken.isEmpty())) {
 
                 displayErrorExitDialog("Token", "Missing Token");
                 return;
@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
 
             String szEmail = mySharedPreferences.getString("email", null);
             if ((szEmail == null) ||
-                (szEmail.isEmpty())) {
+                    (szEmail.isEmpty())) {
 
                 displayErrorExitDialog("Email", "Email Missing");
                 return;
