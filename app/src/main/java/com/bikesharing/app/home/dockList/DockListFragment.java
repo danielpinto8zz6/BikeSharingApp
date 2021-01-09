@@ -77,7 +77,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
             this.myRecyclerView = view.findViewById(R.id.dock_recycler_view);
             this.mySwipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
 
-            this.mySwipeRefreshLayout.setOnRefreshListener(() -> onLoad()
+            this.mySwipeRefreshLayout.setOnRefreshListener(this::onLoad
             );
 
             // use this setting to improve performance if you know that changes
@@ -89,7 +89,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
             this.myRecyclerView.setLayoutManager(myLayoutManager);
 
             // specify an adapter (see also next example)
-            this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter();
+            this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
             this.myRecyclerView.setAdapter(this.myDockRecyclerViewAdapter);
 
             myRecyclerView.addOnScrollListener(new PaginationScrollListener(myLayoutManager) {
@@ -138,7 +138,6 @@ public class DockListFragment extends Fragment implements HomeFragment {
     }
 
     private void loadDocks(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
-        Toast.makeText(getContext(), "Loading docks", Toast.LENGTH_SHORT);
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
         Call<Page<Dock>> myReturnedUser = myRestService.getAllDocks(nPage, nSize, bOnlyBikes, "Bearer " + szToken);
@@ -159,6 +158,8 @@ public class DockListFragment extends Fragment implements HomeFragment {
 
                 isLoading = false;
                 mySwipeRefreshLayout.setRefreshing(isLoading);
+
+                Toast.makeText(getContext(), "Dock list updated", Toast.LENGTH_SHORT).show();
             }
 
             @Override

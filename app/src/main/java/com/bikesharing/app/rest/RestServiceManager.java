@@ -1,7 +1,5 @@
 package com.bikesharing.app.rest;
 
-import com.bikesharing.app.R;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -20,7 +18,7 @@ public class RestServiceManager {
         if (myRestServiceManager == null) {
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://20.74.9.5:80")
+                    .baseUrl("http://20.74.10.21:80")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 

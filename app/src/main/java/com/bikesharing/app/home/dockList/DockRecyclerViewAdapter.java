@@ -1,18 +1,26 @@
 package com.bikesharing.app.home.dockList;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.Dock;
+import com.bikesharing.app.gps.GpsActivity;
+import com.bikesharing.app.home.HomeActivity;
 
 import java.util.ArrayList;
 
 public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerViewAdapter.MyViewHolder> {
+
+    private HomeActivity myHomeActivity;
+
+    private RecyclerView myRecyclerView;
 
     private ArrayList<Dock> myDockDataset = new ArrayList<>();
 
@@ -21,7 +29,6 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
     // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        // each data item is just a string in this case
         public TextView myLocation;
         public TextView myNumberOfBikes;
         public TextView myDistance;
@@ -38,8 +45,16 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
         }
     }
 
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+
+        this.myRecyclerView = recyclerView;
+    }
+
     // Provide a suitable constructor (depends on the kind of dataset)
-    public DockRecyclerViewAdapter() {
+    public DockRecyclerViewAdapter(HomeActivity myHomeActivity) {
+        this.myHomeActivity = myHomeActivity;
     }
 
     public void addAll(ArrayList<Dock> myDockDataset) {
@@ -59,12 +74,25 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
         notifyItemInserted(this.myDockDataset.size() - 1);
     }
 
+    private final View.OnClickListener myDockClickListener = myView -> {
+
+        int nPosition = this.myRecyclerView.getChildLayoutPosition(myView);
+        Dock myDock = myDockDataset.get(nPosition);
+
+        Intent myIntent = new Intent(myHomeActivity.getApplicationContext(), GpsActivity.class);
+        myIntent.putExtra("Dock", myDock);
+
+        myHomeActivity.startActivity(myIntent);
+        myHomeActivity.finish();
+    };
+
     // Create new views (invoked by the layout manager)
     @Override
     public DockRecyclerViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         // create a new view
         View myOptionDock = LayoutInflater.from(parent.getContext()).inflate(R.layout.option_dock, parent, false);
+        myOptionDock.setOnClickListener(myDockClickListener);
         return new MyViewHolder(myOptionDock);
     }
 

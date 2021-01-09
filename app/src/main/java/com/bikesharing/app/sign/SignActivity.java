@@ -1,5 +1,7 @@
 package com.bikesharing.app.sign;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -7,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bikesharing.app.R;
+import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.sign.login.LoginFragment;
 
 public class SignActivity extends AppCompatActivity {
@@ -19,6 +22,19 @@ public class SignActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         if (savedInstanceState == null) {
+
+            SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+            String szToken = mySharedPreferences.getString("token", null);
+
+            if ((szToken != null) && (!szToken.isEmpty())) {
+
+                String szEmail = mySharedPreferences.getString("email", null);
+                if ((szEmail != null) || (!szEmail.isEmpty())) {
+
+                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                    finish();
+                }
+            }
 
             LoginFragment myLoginFragment = new LoginFragment();
 

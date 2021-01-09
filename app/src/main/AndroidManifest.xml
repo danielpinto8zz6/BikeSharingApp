@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -16,9 +17,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BikeSharingApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".home.HomeActivity" android:screenOrientation="portrait" />
-        <activity android:name=".sign.SignActivity" android:screenOrientation="portrait" />
-        <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" >
+        <activity android:name=".gps.GpsActivity"></activity>
+        <activity
+            android:name=".home.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sign.SignActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WelcomeActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

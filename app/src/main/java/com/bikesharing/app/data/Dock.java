@@ -2,7 +2,9 @@ package com.bikesharing.app.data;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Dock {
+import java.io.Serializable;
+
+public class Dock implements Serializable {
 
     @SerializedName("id")
     private int id;

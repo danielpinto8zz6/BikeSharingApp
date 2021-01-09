@@ -1,6 +1,7 @@
 package com.bikesharing.app.home;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import com.bikesharing.app.home.settings.SettingsFragment;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
+import com.bikesharing.app.sign.SignActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -48,13 +50,13 @@ public class HomeActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
-        this.szToken = mySharedPreferences.getString("token", null);
-
         if (savedInstanceState == null) {
 
+            SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+
+            this.szToken = mySharedPreferences.getString("token", null);
             if ((this.szToken == null) ||
-                    (this.szToken.isEmpty())) {
+                (this.szToken.isEmpty())) {
 
                 displayErrorExitDialog("Token", "Missing Token");
                 return;
@@ -62,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
 
             String szEmail = mySharedPreferences.getString("email", null);
             if ((szEmail == null) ||
-                    (szEmail.isEmpty())) {
+                (szEmail.isEmpty())) {
 
                 displayErrorExitDialog("Email", "Email Missing");
                 return;
@@ -158,10 +160,24 @@ public class HomeActivity extends AppCompatActivity {
         AlertDialog myDialog = new AlertDialog.Builder(this).create();
         myDialog.setTitle("Exit?");
         myDialog.setMessage("You want to exit?");
-        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ok", (dialog, which) -> {
+        myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Yes", (dialog, which) -> {
             dialog.dismiss();
             finishAndRemoveTask();
         });
+
+        myDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Logout", (dialog, which) -> {
+
+            dialog.dismiss();
+
+            SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+
+            mySharedPreferences.edit().remove("token").apply();
+            mySharedPreferences.edit().remove("email").apply();
+
+            startActivity(new Intent(getApplicationContext(), SignActivity.class));
+            finish();
+        });
+
         myDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Back to app", (dialog, which) -> dialog.dismiss());
 
         myDialog.show();
