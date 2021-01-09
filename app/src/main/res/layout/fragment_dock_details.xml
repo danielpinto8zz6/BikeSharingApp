@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dock_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/WhiteSmoke"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/maps_view"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/bikeId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bike id: " />
+
+    <TextView
+        android:id="@+id/dockId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dock id: " />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location: " />
+
+    <Button
+        android:id="@+id/unlockBike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/unlock_bike" />
+</LinearLayout>

@@ -10,10 +10,10 @@ public class Dock implements Serializable {
     private int id;
 
     @SerializedName("latitude")
-    private long latitude;
+    private double latitude;
 
     @SerializedName("longitude")
-    private long longitude;
+    private double longitude;
 
     @SerializedName("location")
     private String location;
@@ -37,19 +37,19 @@ public class Dock implements Serializable {
         this.id = id;
     }
 
-    public long getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(long latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public long getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(long longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -70,12 +70,12 @@ public class Dock implements Serializable {
     }
 
     //TODO getDistance
-    public long getDistance() {
+    public double getDistance() {
         return latitude;
     }
 
     //TODO getDistanceTime
-    public long getDistanceTime() {
+    public double getDistanceTime() {
         return latitude;
     }
 

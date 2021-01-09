@@ -27,6 +27,8 @@ import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.bikesharing.app.utils.PaginationScrollListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -35,7 +37,6 @@ import retrofit2.Response;
 
 public class DockListFragment extends Fragment implements HomeFragment {
 
-    private RecyclerView myRecyclerView;
     private DockRecyclerViewAdapter myDockRecyclerViewAdapter;
     private SwipeRefreshLayout mySwipeRefreshLayout;
 
@@ -44,7 +45,6 @@ public class DockListFragment extends Fragment implements HomeFragment {
     private int nTotalPages = 1;
 
     private boolean isLoading = false;
-    private boolean isLastPage = false;
 
     private String szToken;
 
@@ -73,65 +73,81 @@ public class DockListFragment extends Fragment implements HomeFragment {
                 ((HomeActivity) getActivity()).displayErrorExitDialog("Token", "Missing Token");
                 return;
             }
-
-            this.myRecyclerView = view.findViewById(R.id.dock_recycler_view);
-            this.mySwipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
-
-            this.mySwipeRefreshLayout.setOnRefreshListener(this::onLoad);
-
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
-            this.myRecyclerView.setHasFixedSize(true);
-
-            // use a linear layout manager
-            LinearLayoutManager myLayoutManager = new LinearLayoutManager(getActivity());
-            this.myRecyclerView.setLayoutManager(myLayoutManager);
-
-            // specify an adapter (see also next example)
-            this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
-            this.myRecyclerView.setAdapter(this.myDockRecyclerViewAdapter);
-
-            myRecyclerView.addOnScrollListener(new PaginationScrollListener(myLayoutManager) {
-                @Override
-                protected void loadMoreItems() {
-                    isLoading = true;
-                    mySwipeRefreshLayout.setRefreshing(isLoading);
-
-                    nPage += 1;
-
-                    loadDocks(nPage, nSize, true, szToken);
-                }
-
-                @Override
-                public int getTotalPageCount() {
-                    return nTotalPages;
-                }
-
-                @Override
-                public boolean isLastPage() {
-                    return nPage == nTotalPages;
-                }
-
-                @Override
-                public boolean isLoading() {
-                    return isLoading;
-                }
-            });
-
-            this.myRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            this.myRecyclerView.addItemDecoration(new DividerItemDecoration(myRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-
-            loadDocks(this.nPage, this.nSize, true, this.szToken);
         }
 
+        RecyclerView myRecyclerView = view.findViewById(R.id.dock_recycler_view);
+        this.mySwipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
 
+        this.mySwipeRefreshLayout.setOnRefreshListener(this::onLoad);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        myRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        LinearLayoutManager myLayoutManager = new LinearLayoutManager(getActivity());
+        myRecyclerView.setLayoutManager(myLayoutManager);
+
+        this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter(new OnItemClickListener() {
+            @Override
+            public void onItemClick(Dock item) {
+                Fragment myFragment = new DockDetailsFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("bikeId", item.getBikeId());
+                bundle.putInt("dockId", item.getId());
+                bundle.putDouble("latitude", item.getLatitude());
+                bundle.putDouble("longitude", item.getLongitude());
+                bundle.putString("location", item.getLocation());
+
+                myFragment.setArguments(bundle);
+
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.dock_list, myFragment).addToBackStack(null).commit();
+            }
+        });
+
+        // specify an adapter (see also next example)
+//            this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
+        myRecyclerView.setAdapter(this.myDockRecyclerViewAdapter);
+
+        myRecyclerView.addOnScrollListener(new PaginationScrollListener(myLayoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                isLoading = true;
+                mySwipeRefreshLayout.setRefreshing(true);
+
+                nPage += 1;
+
+                loadDocks(nPage, nSize, true, szToken);
+            }
+
+            @Override
+            public int getTotalPageCount() {
+                return nTotalPages;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return nPage == nTotalPages;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+        });
+
+        myRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        myRecyclerView.addItemDecoration(new DividerItemDecoration(myRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
+
+        loadDocks(nPage, nSize, true, szToken);
     }
 
     private void onLoad() {
         nPage = 0;
         myDockRecyclerViewAdapter.set(new ArrayList<>());
 
-        loadDocks(nPage, nSize, true, this.szToken);
+        loadDocks(nPage, nSize, true, szToken);
 
         mySwipeRefreshLayout.setRefreshing(false); // Disables the refresh icon
     }
@@ -139,12 +155,12 @@ public class DockListFragment extends Fragment implements HomeFragment {
     private void loadDocks(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Page<Dock>> myReturnedUser = myRestService.getAllDocks(nPage, nSize, bOnlyBikes, "Bearer " + szToken);
+        Call<Page<Dock>> myReturnedUser = myRestService.getAllDocks(nPage, DockListFragment.nSize, true, "Bearer " + szToken);
 
         myReturnedUser.enqueue(new Callback<Page<Dock>>() {
 
             @Override
-            public void onResponse(Call<Page<Dock>> call, Response<Page<Dock>> response) {
+            public void onResponse(@NotNull Call<Page<Dock>> call, @NotNull Response<Page<Dock>> response) {
 
                 if (!response.isSuccessful()) {
 

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bikesharing.app.R;
+import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.sign.login.LoginFragment;
 
 public class SignActivity extends AppCompatActivity {

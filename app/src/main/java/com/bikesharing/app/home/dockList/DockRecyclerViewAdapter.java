@@ -14,6 +14,8 @@ import com.bikesharing.app.data.Dock;
 import com.bikesharing.app.gps.GpsActivity;
 import com.bikesharing.app.home.HomeActivity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerViewAdapter.MyViewHolder> {
@@ -23,6 +25,8 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
     private RecyclerView myRecyclerView;
 
     private ArrayList<Dock> myDockDataset = new ArrayList<>();
+
+    private final OnItemClickListener listener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -43,6 +47,11 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
             this.myDistance = myOptionDock.findViewById(R.id.distance);
             this.myDistanceTime = myOptionDock.findViewById(R.id.distance_time);
         }
+
+
+        public void bind(final Dock item, final OnItemClickListener listener) {
+            itemView.setOnClickListener(v -> listener.onItemClick(item));
+        }
     }
 
     @Override
@@ -52,9 +61,8 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
         this.myRecyclerView = recyclerView;
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public DockRecyclerViewAdapter(HomeActivity myHomeActivity) {
-        this.myHomeActivity = myHomeActivity;
+    public DockRecyclerViewAdapter(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
     public void addAll(ArrayList<Dock> myDockDataset) {
@@ -87,6 +95,7 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
     };
 
     // Create new views (invoked by the layout manager)
+    @NotNull
     @Override
     public DockRecyclerViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -100,12 +109,15 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
     @Override
     public void onBindViewHolder(MyViewHolder myOptionDock, int position) {
 
+        myOptionDock.bind(myDockDataset.get(position), listener);
+
         Dock myDock = this.myDockDataset.get(position);
 
         myOptionDock.myLocation.setText(myDock.getLocation());
         myOptionDock.myNumberOfBikes.setText(String.valueOf(myDock.getNumberOfBikes()));
         myOptionDock.myDistance.setText(String.valueOf(this.myDockDataset.get(position).getDistance()));
         myOptionDock.myDistanceTime.setText(String.valueOf(this.myDockDataset.get(position).getDistanceTime()));
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)

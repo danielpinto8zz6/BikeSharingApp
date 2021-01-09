@@ -54,4 +54,5 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:5.7.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.7.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 }
