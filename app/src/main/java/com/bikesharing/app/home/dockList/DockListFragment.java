@@ -88,23 +88,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
         LinearLayoutManager myLayoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(myLayoutManager);
 
-        this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter(new OnItemClickListener() {
-            @Override
-            public void onItemClick(Dock item) {
-                Fragment myFragment = new DockDetailsFragment();
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("bikeId", item.getBikeId());
-                bundle.putInt("dockId", item.getId());
-                bundle.putDouble("latitude", item.getLatitude());
-                bundle.putDouble("longitude", item.getLongitude());
-                bundle.putString("location", item.getLocation());
-
-                myFragment.setArguments(bundle);
-
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.dock_list, myFragment).addToBackStack(null).commit();
-            }
-        });
+        this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
 
         // specify an adapter (see also next example)
 //            this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
@@ -169,7 +153,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
                 }
 
                 nTotalPages = (int) response.body().getTotalPages();
-                myDockRecyclerViewAdapter.addAll(response.body().getContent());
+                myDockRecyclerViewAdapter.addAll((ArrayList<Dock>) response.body().getContent());
 
                 isLoading = false;
                 mySwipeRefreshLayout.setRefreshing(isLoading);

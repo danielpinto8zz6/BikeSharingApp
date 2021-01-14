@@ -18,7 +18,7 @@ public class Dock implements Serializable {
     @SerializedName("location")
     private String location;
 
-    @SerializedName("bikeid")
+    @SerializedName("bikeId")
     private int bikeId;
 
     public Dock(int id, long latitude, long longitude, String location, int bikeId) {

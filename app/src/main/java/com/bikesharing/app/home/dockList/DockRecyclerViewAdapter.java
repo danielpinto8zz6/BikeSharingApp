@@ -26,8 +26,6 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
 
     private ArrayList<Dock> myDockDataset = new ArrayList<>();
 
-    private final OnItemClickListener listener;
-
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -47,11 +45,6 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
             this.myDistance = myOptionDock.findViewById(R.id.distance);
             this.myDistanceTime = myOptionDock.findViewById(R.id.distance_time);
         }
-
-
-        public void bind(final Dock item, final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(item));
-        }
     }
 
     @Override
@@ -61,8 +54,8 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
         this.myRecyclerView = recyclerView;
     }
 
-    public DockRecyclerViewAdapter(OnItemClickListener listener) {
-        this.listener = listener;
+    public DockRecyclerViewAdapter(HomeActivity myHomeActivity) {
+        this.myHomeActivity = myHomeActivity;
     }
 
     public void addAll(ArrayList<Dock> myDockDataset) {
@@ -108,8 +101,6 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder myOptionDock, int position) {
-
-        myOptionDock.bind(myDockDataset.get(position), listener);
 
         Dock myDock = this.myDockDataset.get(position);
 
