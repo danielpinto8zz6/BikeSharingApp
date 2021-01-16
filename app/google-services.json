@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "686244923836",
+    "project_id": "bikeshare-f2555",
+    "storage_bucket": "bikeshare-f2555.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686244923836:android:480ad6c6bb2038997183b9",
+        "android_client_info": {
+          "package_name": "com.bikesharing.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686244923836-j0kj3qruhdmk6ekhdfk3l4bp00u93c6r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm56N6NGjKuUpcfTAGT740rWUN_dCz6t0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "686244923836-j0kj3qruhdmk6ekhdfk3l4bp00u93c6r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
