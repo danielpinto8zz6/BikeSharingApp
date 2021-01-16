@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BikeSharingApp"
         android:usesCleartextTraffic="true">
+        <activity android:name=".payment.PaymentActivity"></activity>
         <activity
             android:name=".gps.NavigationActivity"
             android:screenOrientation="portrait" />

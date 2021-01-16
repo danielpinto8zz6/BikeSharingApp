@@ -96,6 +96,9 @@ public class NavigationActivity extends AppCompatActivity implements OnNavigatio
             myAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(R.color.Red);
         });
 
+        myAlertDialog.setCancelable(false);
+        myAlertDialog.setCanceledOnTouchOutside(false);
+
         myAlertDialog.show();
     }
 

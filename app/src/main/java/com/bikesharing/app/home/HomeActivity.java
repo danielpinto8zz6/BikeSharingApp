@@ -12,6 +12,7 @@ import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.bikesharing.app.sign.SignActivity;
+import com.bikesharing.app.travel.TravelActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -64,13 +65,22 @@ public class HomeActivity extends AppCompatActivity {
 
             String szEmail = mySharedPreferences.getString("email", null);
             if ((szEmail == null) ||
-                    (szEmail.isEmpty())) {
+                (szEmail.isEmpty())) {
 
                 displayErrorExitDialog("Email", "Email Missing");
                 return;
             }
 
             getRestUserInfo(szEmail, szToken);
+
+            if (mySharedPreferences.getBoolean("isTravelling", Boolean.FALSE) == Boolean.TRUE) {
+
+                Intent myIntent = new Intent(getApplicationContext(), TravelActivity.class);
+                myIntent.putExtra("Email", szEmail);
+
+                startActivity(myIntent);
+                finish();
+            }
 
             BottomNavigationView myBottomNavigationView = findViewById(R.id.bottomMenu);
             myBottomNavigationView.setOnNavigationItemSelectedListener(new OnNavigationItemSelected());
@@ -148,7 +158,13 @@ public class HomeActivity extends AppCompatActivity {
         myDialog.setTitle(szTitle);
         myDialog.setMessage(szMessage);
         myDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> {
-            finishAndRemoveTask();
+
+            SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+            mySharedPreferences.edit().clear().apply();
+
+            startActivity(new Intent(getApplicationContext(), SignActivity.class));
+
+            finish();
             dialog.dismiss();
         });
 
@@ -196,6 +212,11 @@ public class HomeActivity extends AppCompatActivity {
                 case R.id.menuMain:
                     nFragmentType = HomeFragment.FRAGMENT_TYPE_DOCK_LIST;
                     break;
+
+                case R.id.menuHistory:
+                    nFragmentType = HomeFragment.FRAGMENT_TYPE_DOCK_LIST;
+                    break;
+
                 case R.id.menuSettings:
                     nFragmentType = HomeFragment.FRAGMENT_TYPE_SETTINGS;
                     break;

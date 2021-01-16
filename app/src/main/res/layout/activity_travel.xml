@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,17 +9,9 @@
     android:layout_gravity="center"
     android:gravity="center">
 
-    <TextView
-        style="@style/viewParent.headerText.NoMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enjoy your ride :)" />
-
-
-    <pl.droidsonroids.gif.GifImageView
-        android:layout_gravity="center"
-        android:layout_width="500dp"
-        android:layout_height="500dp"
-        android:src="@drawable/travel"
-        />
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        mapbox:mapbox_cameraZoom="15"/>
 </LinearLayout>

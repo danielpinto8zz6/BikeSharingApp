@@ -7,6 +7,11 @@
         android:title="@string/main" />
 
     <item
+        android:id="@+id/menuHistory"
+        android:icon="@drawable/ic_history"
+        android:title="@string/main" />
+
+    <item
         android:id="@+id/menuSettings"
         android:icon="@drawable/ic_settings"
         android:title="@string/settings" />

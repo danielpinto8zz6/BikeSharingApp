@@ -34,12 +34,14 @@ public class WelcomeActivity extends AppCompatActivity {
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
         if (!mySharedPreferences.getBoolean("isFirstRun", true)) {
 
-            String token = mySharedPreferences.getString("token", null);
-///            if (token == null) {
-            startActivity(new Intent(getApplicationContext(), SignActivity.class));
-///            } else {
-///                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-///            }
+            String szToken = mySharedPreferences.getString("token", null);
+            if ((szToken == null) ||
+                (szToken.isEmpty())) {
+
+                startActivity(new Intent(getApplicationContext(), SignActivity.class));
+            } else {
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            }
 
             finish();
         }
