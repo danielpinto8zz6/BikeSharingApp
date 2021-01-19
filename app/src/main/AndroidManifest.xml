@@ -17,7 +17,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BikeSharingApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".payment.PaymentActivity"></activity>
+        <activity
+            android:name=".home.rentalHistory.locationHistory.LocationHistoryActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".feedback.FeedbackActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".payment.PaymentActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".gps.NavigationActivity"
             android:screenOrientation="portrait" />
@@ -46,6 +54,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
+
         <service
             android:name=".services.MyFirebaseMessagingService"
             android:exported="false">

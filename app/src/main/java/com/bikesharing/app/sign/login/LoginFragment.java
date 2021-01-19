@@ -125,7 +125,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Sig
         super.onResume();
     }
 
-
     @Override
     public void onClick(View v) {
 

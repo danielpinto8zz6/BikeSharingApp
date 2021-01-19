@@ -1,4 +1,4 @@
-package com.bikesharing.app.home.history;
+package com.bikesharing.app.home.rentalHistory;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bikesharing.app.R;
-import com.bikesharing.app.data.Dock;
 import com.bikesharing.app.data.Page.Page;
+import com.bikesharing.app.data.Rental;
 import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.home.HomeFragment;
 import com.bikesharing.app.rest.HttpStatus;
@@ -35,9 +35,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HistoryListFragment extends Fragment implements HomeFragment {
+public class RentalHistoryListFragment extends Fragment implements HomeFragment {
 
-    private HistoryRecyclerViewAdapter myHistoryRecyclerViewAdapter;
+    private RentalHistoryRecyclerViewAdapter myRentalRecyclerViewAdapter;
     private SwipeRefreshLayout mySwipeRefreshLayout;
 
     private int nPage = 0;
@@ -54,7 +54,7 @@ public class HistoryListFragment extends Fragment implements HomeFragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_dock_list, container, false);
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     @Override
@@ -88,11 +88,11 @@ public class HistoryListFragment extends Fragment implements HomeFragment {
         LinearLayoutManager myLayoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(myLayoutManager);
 
-        this.myHistoryRecyclerViewAdapter = new HistoryRecyclerViewAdapter((HomeActivity) getActivity());
+        this.myRentalRecyclerViewAdapter = new RentalHistoryRecyclerViewAdapter((HomeActivity) getActivity());
 
         // specify an adapter (see also next example)
 //            this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
-        myRecyclerView.setAdapter(this.myHistoryRecyclerViewAdapter);
+        myRecyclerView.setAdapter(this.myRentalRecyclerViewAdapter);
 
         myRecyclerView.addOnScrollListener(new PaginationScrollListener(myLayoutManager) {
             @Override
@@ -102,7 +102,7 @@ public class HistoryListFragment extends Fragment implements HomeFragment {
 
                 nPage += 1;
 
-                loadDocks(nPage, nSize, true, szToken);
+                loadHistory(nPage, nSize, true, szToken);
             }
 
             @Override
@@ -124,27 +124,27 @@ public class HistoryListFragment extends Fragment implements HomeFragment {
         myRecyclerView.setItemAnimator(new DefaultItemAnimator());
         myRecyclerView.addItemDecoration(new DividerItemDecoration(myRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
-        loadDocks(nPage, nSize, true, szToken);
+        loadHistory(nPage, nSize, true, szToken);
     }
 
     private void onLoad() {
         nPage = 0;
-        myHistoryRecyclerViewAdapter.set(new ArrayList<>());
+        myRentalRecyclerViewAdapter.set(new ArrayList<>());
 
-        loadDocks(nPage, nSize, true, szToken);
+        loadHistory(nPage, nSize, true, szToken);
 
         mySwipeRefreshLayout.setRefreshing(false); // Disables the refresh icon
     }
 
-    private void loadDocks(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
+    private void loadHistory(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Page<Dock>> myReturnedUser = myRestService.getAllDocks(nPage, HistoryListFragment.nSize, true, "Bearer " + szToken);
+        Call<Page<Rental>> myReturnedUser = myRestService.getAllBikeHistory(nPage, RentalHistoryListFragment.nSize,  "Bearer " + szToken);
 
-        myReturnedUser.enqueue(new Callback<Page<Dock>>() {
+        myReturnedUser.enqueue(new Callback<Page<Rental>>() {
 
             @Override
-            public void onResponse(@NotNull Call<Page<Dock>> call, @NotNull Response<Page<Dock>> response) {
+            public void onResponse(@NotNull Call<Page<Rental>> call, @NotNull Response<Page<Rental>> response) {
 
                 if (!response.isSuccessful()) {
 
@@ -153,7 +153,7 @@ public class HistoryListFragment extends Fragment implements HomeFragment {
                 }
 
                 nTotalPages = (int) response.body().getTotalPages();
-                myHistoryRecyclerViewAdapter.addAll((ArrayList<Dock>) response.body().getContent());
+                myRentalRecyclerViewAdapter.addAll((ArrayList<Rental>) response.body().getContent());
 
                 isLoading = false;
                 mySwipeRefreshLayout.setRefreshing(isLoading);
@@ -162,7 +162,7 @@ public class HistoryListFragment extends Fragment implements HomeFragment {
             }
 
             @Override
-            public void onFailure(Call<Page<Dock>> call, Throwable t) {
+            public void onFailure(Call<Page<Rental>> call, Throwable t) {
                 ((HomeActivity) getActivity()).displayErrorExitDialog("Error", t.getMessage());
             }
         });
@@ -175,6 +175,6 @@ public class HistoryListFragment extends Fragment implements HomeFragment {
 
     @Override
     public int getFragmentType() {
-        return HomeFragment.FRAGMENT_TYPE_DOCK_LIST;
+        return HomeFragment.FRAGMENT_TYPE_BIKE_HISTORY;
     }
 }

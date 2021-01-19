@@ -68,19 +68,4 @@ public class Dock implements Serializable {
     public void setBikeId(int bikeId) {
         this.bikeId = bikeId;
     }
-
-    //TODO getDistance
-    public double getDistance() {
-        return latitude;
-    }
-
-    //TODO getDistanceTime
-    public double getDistanceTime() {
-        return latitude;
-    }
-
-    //Todo numberOfBikes
-    public int getNumberOfBikes() {
-        return bikeId;
-    }
 }

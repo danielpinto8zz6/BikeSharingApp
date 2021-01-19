@@ -1,4 +1,4 @@
-package com.bikesharing.app.home.dockList;
+package com.bikesharing.app.home.paymentHistory;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bikesharing.app.R;
-import com.bikesharing.app.data.Dock;
 import com.bikesharing.app.data.Page.Page;
+import com.bikesharing.app.data.payment.PaymentHistory;
 import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.home.HomeFragment;
 import com.bikesharing.app.rest.HttpStatus;
@@ -35,9 +35,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DockListFragment extends Fragment implements HomeFragment {
+public class PaymentHistoryListFragment extends Fragment implements HomeFragment {
 
-    private DockRecyclerViewAdapter myDockRecyclerViewAdapter;
+    private PaymentHistoryRecyclerViewAdapter myPaymentHistoryRecyclerViewAdapter;
     private SwipeRefreshLayout mySwipeRefreshLayout;
 
     private int nPage = 0;
@@ -88,11 +88,11 @@ public class DockListFragment extends Fragment implements HomeFragment {
         LinearLayoutManager myLayoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(myLayoutManager);
 
-        this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
+        this.myPaymentHistoryRecyclerViewAdapter = new PaymentHistoryRecyclerViewAdapter((HomeActivity) getActivity());
 
         // specify an adapter (see also next example)
 //            this.myDockRecyclerViewAdapter = new DockRecyclerViewAdapter((HomeActivity) getActivity());
-        myRecyclerView.setAdapter(this.myDockRecyclerViewAdapter);
+        myRecyclerView.setAdapter(this.myPaymentHistoryRecyclerViewAdapter);
 
         myRecyclerView.addOnScrollListener(new PaginationScrollListener(myLayoutManager) {
             @Override
@@ -102,7 +102,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
 
                 nPage += 1;
 
-                loadDocks(nPage, nSize, true, szToken);
+                loadHistory(nPage, nSize, true, szToken);
             }
 
             @Override
@@ -124,27 +124,27 @@ public class DockListFragment extends Fragment implements HomeFragment {
         myRecyclerView.setItemAnimator(new DefaultItemAnimator());
         myRecyclerView.addItemDecoration(new DividerItemDecoration(myRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
-        loadDocks(nPage, nSize, true, szToken);
+        loadHistory(nPage, nSize, true, szToken);
     }
 
     private void onLoad() {
         nPage = 0;
-        myDockRecyclerViewAdapter.set(new ArrayList<>());
+        myPaymentHistoryRecyclerViewAdapter.set(new ArrayList<>());
 
-        loadDocks(nPage, nSize, true, szToken);
+        loadHistory(nPage, nSize, true, szToken);
 
         mySwipeRefreshLayout.setRefreshing(false); // Disables the refresh icon
     }
 
-    private void loadDocks(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
+    private void loadHistory(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Page<Dock>> myReturnedUser = myRestService.getAllDocks(nPage, DockListFragment.nSize, true, "Bearer " + szToken);
+        Call<Page<PaymentHistory>> myReturnedUser = myRestService.getAllPaymentHistory(nPage, PaymentHistoryListFragment.nSize,  "Bearer " + szToken);
 
-        myReturnedUser.enqueue(new Callback<Page<Dock>>() {
+        myReturnedUser.enqueue(new Callback<Page<PaymentHistory>>() {
 
             @Override
-            public void onResponse(@NotNull Call<Page<Dock>> call, @NotNull Response<Page<Dock>> response) {
+            public void onResponse(@NotNull Call<Page<PaymentHistory>> call, @NotNull Response<Page<PaymentHistory>> response) {
 
                 if (!response.isSuccessful()) {
 
@@ -153,7 +153,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
                 }
 
                 nTotalPages = (int) response.body().getTotalPages();
-                myDockRecyclerViewAdapter.addAll((ArrayList<Dock>) response.body().getContent());
+                myPaymentHistoryRecyclerViewAdapter.addAll((ArrayList<PaymentHistory>) response.body().getContent());
 
                 isLoading = false;
                 mySwipeRefreshLayout.setRefreshing(isLoading);
@@ -162,7 +162,7 @@ public class DockListFragment extends Fragment implements HomeFragment {
             }
 
             @Override
-            public void onFailure(Call<Page<Dock>> call, Throwable t) {
+            public void onFailure(Call<Page<PaymentHistory>> call, Throwable t) {
                 ((HomeActivity) getActivity()).displayErrorExitDialog("Error", t.getMessage());
             }
         });
@@ -175,6 +175,6 @@ public class DockListFragment extends Fragment implements HomeFragment {
 
     @Override
     public int getFragmentType() {
-        return HomeFragment.FRAGMENT_TYPE_DOCK_LIST;
+        return HomeFragment.FRAGMENT_TYPE_PAYMENT_HISTORY;
     }
 }

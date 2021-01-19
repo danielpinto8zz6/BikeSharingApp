@@ -5,17 +5,28 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
 import com.bikesharing.app.R;
+import com.bikesharing.app.data.EmailToken;
+import com.bikesharing.app.data.User;
 import com.bikesharing.app.home.HomeActivity;
+import com.bikesharing.app.rest.HttpStatus;
+import com.bikesharing.app.rest.RestService;
+import com.bikesharing.app.rest.RestServiceManager;
 import com.google.firebase.messaging.RemoteMessage;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MyFirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMessagingService";
@@ -129,10 +140,36 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
 
-        Toast.makeText(this, "Test", Toast.LENGTH_SHORT).show();
+        SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
 
+        String szToken = mySharedPreferences.getString("token", null);
+        if ((szToken == null) ||
+            (szToken.isEmpty())) {
+
+            return;
+        }
+
+        String szEmail = mySharedPreferences.getString("email", null);
+        if ((szEmail == null) ||
+                (szEmail.isEmpty())) {
+
+            return;
+        }
+
+        RestService myRestService = RestServiceManager.getInstance().getRestService();
+        Call<Void> myReturnedUser = myRestService.saveToken(new EmailToken(szEmail, token), "Bearer " + szToken);
+
+        myReturnedUser.enqueue(new Callback<Void>() {
+
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
     }
 
 }

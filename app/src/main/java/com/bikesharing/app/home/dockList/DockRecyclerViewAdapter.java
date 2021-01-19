@@ -32,18 +32,12 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView myLocation;
-        public TextView myNumberOfBikes;
-        public TextView myDistance;
-        public TextView myDistanceTime;
 
         public MyViewHolder(View myOptionDock) {
 
             super(myOptionDock);
 
             this.myLocation = myOptionDock.findViewById(R.id.dockLocation);
-            this.myNumberOfBikes = myOptionDock.findViewById(R.id.numberOfBikes);
-            this.myDistance = myOptionDock.findViewById(R.id.distance);
-            this.myDistanceTime = myOptionDock.findViewById(R.id.distance_time);
         }
     }
 
@@ -105,10 +99,7 @@ public class DockRecyclerViewAdapter extends RecyclerView.Adapter<DockRecyclerVi
         Dock myDock = this.myDockDataset.get(position);
 
         myOptionDock.myLocation.setText(myDock.getLocation());
-        myOptionDock.myNumberOfBikes.setText(String.valueOf(myDock.getNumberOfBikes()));
-        myOptionDock.myDistance.setText(String.valueOf(this.myDockDataset.get(position).getDistance()));
-        myOptionDock.myDistanceTime.setText(String.valueOf(this.myDockDataset.get(position).getDistanceTime()));
-
+        //TODO Distance and Estimated Time
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -7,18 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.bikesharing.app.data.User;
-import com.bikesharing.app.home.dockList.DockListFragment;
-import com.bikesharing.app.home.settings.SettingsFragment;
-import com.bikesharing.app.rest.HttpStatus;
-import com.bikesharing.app.rest.RestService;
-import com.bikesharing.app.rest.RestServiceManager;
-import com.bikesharing.app.sign.SignActivity;
-import com.bikesharing.app.travel.TravelActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -26,28 +19,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bikesharing.app.R;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.bikesharing.app.data.EmailToken;
+import com.bikesharing.app.data.User;
+import com.bikesharing.app.home.rentalHistory.RentalHistoryListFragment;
+import com.bikesharing.app.home.dockList.DockListFragment;
+import com.bikesharing.app.home.paymentHistory.PaymentHistoryListFragment;
+import com.bikesharing.app.home.settings.SettingsFragment;
+import com.bikesharing.app.rest.HttpStatus;
+import com.bikesharing.app.rest.RestService;
+import com.bikesharing.app.rest.RestServiceManager;
+import com.bikesharing.app.sign.SignActivity;
+import com.bikesharing.app.travel.TravelActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
 
     private User myUserInfo;
     private String szToken;
+    private String szEmail;
     private static final String TAG = "HomeActivity";
 
     @Override
@@ -75,20 +70,20 @@ public class HomeActivity extends AppCompatActivity {
                 return;
             }
 
-            String szEmail = mySharedPreferences.getString("email", null);
-            if ((szEmail == null) ||
-                (szEmail.isEmpty())) {
+            this.szEmail = mySharedPreferences.getString("email", null);
+            if ((this.szEmail == null) ||
+                (this.szEmail.isEmpty())) {
 
                 displayErrorExitDialog("Email", "Email Missing");
                 return;
             }
 
-            getRestUserInfo(szEmail, szToken);
+            getRestUserInfo(this.szEmail, this.szToken);
 
             if (mySharedPreferences.getBoolean("isTravelling", Boolean.FALSE) == Boolean.TRUE) {
 
                 Intent myIntent = new Intent(getApplicationContext(), TravelActivity.class);
-                myIntent.putExtra("Email", szEmail);
+                myIntent.putExtra("Email", this.szEmail);
 
                 startActivity(myIntent);
                 finish();
@@ -117,18 +112,23 @@ public class HomeActivity extends AppCompatActivity {
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                        return;
-                    }
 
                     // Get new FCM registration token
                     String token = task.getResult();
 
-                    // Log and toast
-                    String msg = getString(R.string.msg_token_fmt, token);
-                    Log.d(TAG, msg);
-                    Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    RestService myRestService = RestServiceManager.getInstance().getRestService();
+                    Call<Void> myReturnedUser = myRestService.saveToken(new EmailToken(szEmail, token), "Bearer " + szToken);
+
+                    myReturnedUser.enqueue(new Callback<Void>() {
+
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                        }
+                    });
 
                 });
     }
@@ -253,8 +253,12 @@ public class HomeActivity extends AppCompatActivity {
                     nFragmentType = HomeFragment.FRAGMENT_TYPE_DOCK_LIST;
                     break;
 
-                case R.id.menuHistory:
-                    nFragmentType = HomeFragment.FRAGMENT_TYPE_DOCK_LIST;
+                case R.id.paymentHistory:
+                    nFragmentType = HomeFragment.FRAGMENT_TYPE_PAYMENT_HISTORY;
+                    break;
+
+                case R.id.bikeHistory:
+                    nFragmentType = HomeFragment.FRAGMENT_TYPE_BIKE_HISTORY;
                     break;
 
                 case R.id.menuSettings:
@@ -270,15 +274,31 @@ public class HomeActivity extends AppCompatActivity {
             HomeFragment myHomeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.FRAGMENT_TAG);
 
             if ((myHomeFragment != null) &&
-                    (myHomeFragment.getFragmentType() == nFragmentType)) {
+                (myHomeFragment.getFragmentType() == nFragmentType)) {
                 return true;
             }
 
             Fragment myNewFragment;
-            if (nFragmentType == HomeFragment.FRAGMENT_TYPE_DOCK_LIST) {
-                myNewFragment = new DockListFragment();
-            } else {
-                myNewFragment = new SettingsFragment();
+
+            switch (nFragmentType) {
+
+                case HomeFragment.FRAGMENT_TYPE_PAYMENT_HISTORY:
+                    myNewFragment = new PaymentHistoryListFragment();
+                    break;
+
+                case HomeFragment.FRAGMENT_TYPE_BIKE_HISTORY:
+                    myNewFragment = new RentalHistoryListFragment();
+                    break;
+
+                case HomeFragment.FRAGMENT_TYPE_SETTINGS:
+                    myNewFragment = new SettingsFragment();
+                    break;
+
+                case HomeFragment.FRAGMENT_TYPE_DOCK_LIST:
+                default:
+                    myNewFragment = new DockListFragment();
+                    break;
+
             }
 
             getSupportFragmentManager().beginTransaction()
