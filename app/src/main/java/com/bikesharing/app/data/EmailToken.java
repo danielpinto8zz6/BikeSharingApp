@@ -2,7 +2,9 @@ package com.bikesharing.app.data;
 
 import com.google.gson.annotations.SerializedName;
 
-public class EmailToken {
+import java.io.Serializable;
+
+public class EmailToken implements Serializable {
 
     @SerializedName("email")
     private String email;

@@ -18,6 +18,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bikesharing.app.R;
+import com.bikesharing.app.data.Feedback;
 import com.bikesharing.app.data.User;
 import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.rest.HttpStatus;
@@ -39,6 +40,8 @@ import retrofit2.Response;
 public class FeedbackActivity extends AppCompatActivity implements View.OnClickListener {
 
     private String szToken;
+    private String szEmail;
+    private int nRentalId;
 
     private CircularProgressButton myFeedbackProgressButton;
     private EditText myEditTextFeedback;
@@ -59,8 +62,12 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
 
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
         this.szToken = mySharedPreferences.getString("token", null);
+        this.szEmail = mySharedPreferences.getString("email", null);
+        this.nRentalId = getIntent().getIntExtra("rental" , -1);
 
-        if ((this.szToken == null) && (this.szToken.isEmpty())) {
+        if (((this.szToken == null) || (this.szToken.isEmpty())) ||
+            ((this.szEmail == null) || (this.szEmail.isEmpty())) ||
+            (nRentalId == -1)) {
 
             startActivity(new Intent(getApplicationContext(), SignActivity.class));
             finish();
@@ -119,19 +126,32 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        //TODO feedback
-        //RestService myRestService = RestServiceManager.getInstance().getRestService();
-        //Call<String> myReturnedUser = myRestService.sendFeedback(new Feedback(myRadioGroup.getCheckedRadioButtonId(), szDescription);
+        int nRating = 1;
+        switch (myRadioGroup.getCheckedRadioButtonId())
+        {
+            case R.id.feedbackBad:
+                nRating = 1;
+                break;
+            case R.id.feedbackNormal:
+                nRating = 2;
+                break;
+            case R.id.feedbackGreat:
+                nRating = 3;
+                break;
+        }
 
-        //myReturnedUser.enqueue(new Callback<String>() {
-            //@Override
-            //public void onResponse(Call<String> call, Response<String> response) {
-            //}
+        RestService myRestService = RestServiceManager.getInstance().getRestService();
+        Call<Void> myReturnedUser = myRestService.sendfeedback(new Feedback(this.szEmail, this.nRentalId, szDescription, nRating), "Bearer " + szToken);
 
-            //@Override
-            //public void onFailure(Call<String> call, Throwable t) {
-            //}
-        //});
+        myReturnedUser.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
 
         onSkipClick();
     }

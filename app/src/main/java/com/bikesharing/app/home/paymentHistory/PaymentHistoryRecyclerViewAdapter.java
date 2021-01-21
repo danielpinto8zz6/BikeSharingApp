@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bikesharing.app.R;
-import com.bikesharing.app.data.payment.PaymentHistory;
+import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.payment.PaymentActivity;
 
@@ -24,7 +24,7 @@ public class PaymentHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Paym
 
     private RecyclerView myRecyclerView;
 
-    private ArrayList<PaymentHistory> myPaymentHistoryHistoryDataset = new ArrayList<>();
+    private ArrayList<Payment> myPaymentHistoryDataset = new ArrayList<>();
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -56,30 +56,30 @@ public class PaymentHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Paym
         this.myHomeActivity = myHomeActivity;
     }
 
-    public void addAll(ArrayList<PaymentHistory> myPaymentHistoryHistoryDataset) {
+    public void addAll(ArrayList<Payment> myPaymentHistoryDataset) {
 
-        for (PaymentHistory myPaymentHistoryHistory : myPaymentHistoryHistoryDataset) {
-            this.add(myPaymentHistoryHistory);
+        for (Payment myPaymentHistory : myPaymentHistoryDataset) {
+            this.add(myPaymentHistory);
         }
     }
 
-    public void set(ArrayList<PaymentHistory> myPaymentHistoryHistoryDataset) {
-        this.myPaymentHistoryHistoryDataset = myPaymentHistoryHistoryDataset;
+    public void set(ArrayList<Payment> myPaymentHistoryDataset) {
+        this.myPaymentHistoryDataset = myPaymentHistoryDataset;
         notifyDataSetChanged();
     }
 
-    public void add(PaymentHistory myPaymentHistoryHistoryDataset) {
-        this.myPaymentHistoryHistoryDataset.add(myPaymentHistoryHistoryDataset);
-        notifyItemInserted(this.myPaymentHistoryHistoryDataset.size() - 1);
+    public void add(Payment myPaymentHistoryDataset) {
+        this.myPaymentHistoryDataset.add(myPaymentHistoryDataset);
+        notifyItemInserted(this.myPaymentHistoryDataset.size() - 1);
     }
 
     private final View.OnClickListener myDockClickListener = myView -> {
 
         int nPosition = this.myRecyclerView.getChildLayoutPosition(myView);
-        PaymentHistory myPaymentHistory = myPaymentHistoryHistoryDataset.get(nPosition);
+        Payment myPayment = myPaymentHistoryDataset.get(nPosition);
 
         Intent myIntent = new Intent(myHomeActivity.getApplicationContext(), PaymentActivity.class);
-        myIntent.putExtra("Payment", myPaymentHistory);
+        myIntent.putExtra("Payment", myPayment);
 
         myHomeActivity.startActivity(myIntent);
         myHomeActivity.finish();
@@ -100,16 +100,16 @@ public class PaymentHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Paym
     @Override
     public void onBindViewHolder(MyViewHolder myOptionDock, int position) {
 
-        PaymentHistory myPaymentHistoryHistoryDataset = this.myPaymentHistoryHistoryDataset.get(position);
+        Payment myPaymentHistoryDataset = this.myPaymentHistoryDataset.get(position);
 
-        myOptionDock.myPaymentAmount.setText(String.valueOf(myPaymentHistoryHistoryDataset.getValue()));
-        myOptionDock.myPaymentStatus.setText("Status: " + String.valueOf(myPaymentHistoryHistoryDataset.getStatus()));
-        myOptionDock.myPaymentDate.setText("Date: " + myPaymentHistoryHistoryDataset.getTimestamp().toString());
+        myOptionDock.myPaymentAmount.setText(String.valueOf(myPaymentHistoryDataset.getValue()));
+        myOptionDock.myPaymentStatus.setText("Status: " + String.valueOf(myPaymentHistoryDataset.getStatus()));
+        myOptionDock.myPaymentDate.setText("Date: " + myPaymentHistoryDataset.getTimestamp().toString());
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return myPaymentHistoryHistoryDataset.size();
+        return myPaymentHistoryDataset.size();
     }
 }

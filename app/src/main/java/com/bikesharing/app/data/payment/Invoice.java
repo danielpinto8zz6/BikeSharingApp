@@ -2,9 +2,10 @@ package com.bikesharing.app.data.payment;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Invoice {
+public class Invoice implements Serializable {
 
     @SerializedName("id")
     private Integer id;

@@ -8,19 +8,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PatternMatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.bikesharing.app.R;
+import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.data.payment.PaymentRequest;
 import com.bikesharing.app.feedback.FeedbackActivity;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.bikesharing.app.sign.SignActivity;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.regex.Pattern;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import retrofit2.Call;
@@ -30,6 +35,7 @@ import retrofit2.Response;
 public class PaymentActivity extends AppCompatActivity implements View.OnClickListener {
 
     private CircularProgressButton myPaymentButton;
+    private TextView paymentValue;
     private TextInputLayout creditName;
     private TextInputLayout creditNumber;
     private TextInputLayout creditDate;
@@ -39,7 +45,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
     private String szToken;
 
-    private int nPaymentId = -1;
+    private Payment myPayment;
+    private int nRentalId  = -1;
 
     private boolean bIsPaymentValid = true;
     private boolean bIsCreditNameValid = false;
@@ -55,7 +62,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR  | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         window.setStatusBarColor(getColor(R.color.White));
         window.setNavigationBarColor(getColor(R.color.DarkGreen));
 
@@ -68,8 +75,28 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             finish();
         }
 
+        this.nRentalId = mySharedPreferences.getInt("rental", -1);
+        if (this.nRentalId == -1) {
+
+            startActivity(new Intent(getApplicationContext(), SignActivity.class));
+            finish();
+        }
+
+        this.myPayment = (Payment) getIntent().getSerializableExtra("payment");
+        if (this.myPayment == null) {
+
+            startActivity(new Intent(getApplicationContext(), SignActivity.class));
+            finish();
+        }
+
+        //mySharedPreferences.edit().remove("rental").apply();
+
         this.myPaymentButton = findViewById(R.id.cirPaymentButton);
+        this.myPaymentButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_background_light_green));
         this.myPaymentButton.setOnClickListener(this);
+
+        this.paymentValue = findViewById(R.id.paymentValue);
+        this.paymentValue.setText(this.myPayment.getValue() + "€");
 
         this.creditName = findViewById(R.id.creditNameLayout);
         this.creditName.getEditText().addTextChangedListener(new PaymentTextWatcher(this.creditName));
@@ -86,8 +113,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         this.companyName = findViewById(R.id.companyNameLayout);
 
         this.taxNumber = findViewById(R.id.taxNumberLayout);
-
-        this.nPaymentId = getIntent().getIntExtra("PaymentId", -1);
     }
 
     @Override
@@ -120,10 +145,15 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
 
+        int nTaxNumber = -1;
+        if (!taxNumber.getEditText().getText().toString().isEmpty()) {
+            nTaxNumber = Integer.parseInt(taxNumber.getEditText().getText().toString());
+        }
+
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Void> myReturnedUser = myRestService.donePayment(new PaymentRequest(this.nPaymentId,
+        Call<Void> myReturnedUser = myRestService.donePayment(new PaymentRequest(this.myPayment.getId(),
                 creditName.getEditText().getText().toString(),
-                Integer.parseInt(taxNumber.getEditText().getText().toString()),
+                nTaxNumber,
                 companyName.getEditText().getText().toString(),
                 0,
                 creditNumber.getEditText().getText().toString(),
@@ -134,14 +164,17 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         myReturnedUser.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                System.out.println("Payment teste");
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                System.out.println("Payment exception: " + t.getMessage());
             }
         });
 
         Intent myIntent = new Intent(getApplicationContext(), FeedbackActivity.class);
+        myIntent.putExtra("rental", this.nRentalId);
         startActivity(myIntent);
         finish();
     }
@@ -193,13 +226,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         private void validateCardName() {
-
-            if (creditName.getEditText().getText().toString().contains(" ")) {
-
-                creditName.setError("No Spaces Allowed!");
-                bIsCreditNameValid = false;
-                return;
-            }
 
             if (creditName.getEditText().getText().toString().trim().isEmpty()) {
 
@@ -255,9 +281,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 return;
             }
 
-            if(creditDate.getEditText().getText().toString().length() != 10){
+            if(creditDate.getEditText().getText().toString().length() != 7){
 
-                creditDate.setError("Card Date need to have 10 digit only");
+                creditDate.setError("Card Date need to have 7 digit only");
+                bIsCreditDateValid = false;
+                return;
+            }
+
+            if (!Pattern.matches("^\\d{2}\\/\\d{4}$", creditDate.getEditText().getText().toString())) {
+
+                creditDate.setError("Card Date regex invalid");
                 bIsCreditDateValid = false;
                 return;
             }

@@ -2,8 +2,9 @@ package com.bikesharing.app.rest;
 
 import com.bikesharing.app.data.Dock;
 import com.bikesharing.app.data.EmailToken;
+import com.bikesharing.app.data.Feedback;
 import com.bikesharing.app.data.Page.Page;
-import com.bikesharing.app.data.payment.PaymentHistory;
+import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.data.payment.PaymentRequest;
 import com.bikesharing.app.data.Rental;
 import com.bikesharing.app.data.Token;
@@ -44,11 +45,11 @@ public interface RestService {
     @GET("/dock/dock")
     Call<Page<Dock>> getAllDocks(@Query("page") int nPage, @Query("size") int nSizePage, @Query("onlyWithBikes") boolean nOnlyBikes, @Header("Authorization") String authHeader);
 
-    @GET("/dock/dock")
+    @GET("/rental/rental")
     Call<Page<Rental>> getAllBikeHistory(@Query("page") int nPage, @Query("size") int nSizePage, @Header("Authorization") String authHeader);
 
     @GET("/payment/payment")
-    Call<Page<PaymentHistory>> getAllPaymentHistory(@Query("page") int nPage, @Query("size") int nSizePage, @Header("Authorization") String authHeader);
+    Call<Page<Payment>> getAllPaymentHistory(@Query("page") int nPage, @Query("size") int nSizePage, @Header("Authorization") String authHeader);
 
     @POST("/rental/rental")
     Call<Rental> newRental(@Body Rental myRental, @Header("Authorization") String authHeader);
@@ -61,4 +62,7 @@ public interface RestService {
 
     @POST("/token-manager/token")
     Call<Void> saveToken(@Body EmailToken myToken, @Header("Authorization") String authHeader);
+
+    @POST("/feedback/feedback")
+    Call<Void> sendfeedback(@Body Feedback myFeedback, @Header("Authorization") String authHeader);
 }

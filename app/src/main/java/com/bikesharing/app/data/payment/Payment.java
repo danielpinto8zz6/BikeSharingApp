@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.Date;
 
-public class PaymentHistory implements Serializable {
+public class Payment implements Serializable {
 
     @SerializedName("id")
     private Integer id;
@@ -31,7 +31,7 @@ public class PaymentHistory implements Serializable {
     @SerializedName("invoiceVo")
     private Invoice invoiceVo;
 
-    public PaymentHistory(Integer id, Integer rentalId, Double value, Integer status, Integer method, Date timestamp, String userEmail, Invoice invoiceVo) {
+    public Payment(Integer id, Integer rentalId, Double value, Integer status, Integer method, Date timestamp, String userEmail, Invoice invoiceVo) {
         this.id = id;
         this.rentalId = rentalId;
         this.value = value;

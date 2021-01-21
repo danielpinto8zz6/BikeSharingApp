@@ -18,11 +18,17 @@ import androidx.core.app.NotificationCompat;
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.EmailToken;
 import com.bikesharing.app.data.User;
+import com.bikesharing.app.data.payment.Invoice;
+import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.home.HomeActivity;
+import com.bikesharing.app.payment.PaymentActivity;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +68,17 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
+
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
+            Gson gson = new Gson();
+            JsonElement jsonElement = gson.toJsonTree(remoteMessage.getData());
+            Payment myPayment = gson.fromJson(jsonElement, Payment.class);
+
+            Intent dialogIntent = new Intent(this, PaymentActivity.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            dialogIntent.putExtra("payment", myPayment);
+            startActivity(dialogIntent);
         }
 
         // Check if message contains a notification payload.

@@ -19,7 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.Page.Page;
-import com.bikesharing.app.data.payment.PaymentHistory;
+import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.home.HomeFragment;
 import com.bikesharing.app.rest.HttpStatus;
@@ -139,12 +139,12 @@ public class PaymentHistoryListFragment extends Fragment implements HomeFragment
     private void loadHistory(int nPage, int nSize, boolean bOnlyBikes, String szToken) {
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Page<PaymentHistory>> myReturnedUser = myRestService.getAllPaymentHistory(nPage, PaymentHistoryListFragment.nSize,  "Bearer " + szToken);
+        Call<Page<Payment>> myReturnedUser = myRestService.getAllPaymentHistory(nPage, PaymentHistoryListFragment.nSize,  "Bearer " + szToken);
 
-        myReturnedUser.enqueue(new Callback<Page<PaymentHistory>>() {
+        myReturnedUser.enqueue(new Callback<Page<Payment>>() {
 
             @Override
-            public void onResponse(@NotNull Call<Page<PaymentHistory>> call, @NotNull Response<Page<PaymentHistory>> response) {
+            public void onResponse(@NotNull Call<Page<Payment>> call, @NotNull Response<Page<Payment>> response) {
 
                 if (!response.isSuccessful()) {
 
@@ -153,7 +153,7 @@ public class PaymentHistoryListFragment extends Fragment implements HomeFragment
                 }
 
                 nTotalPages = (int) response.body().getTotalPages();
-                myPaymentHistoryRecyclerViewAdapter.addAll((ArrayList<PaymentHistory>) response.body().getContent());
+                myPaymentHistoryRecyclerViewAdapter.addAll((ArrayList<Payment>) response.body().getContent());
 
                 isLoading = false;
                 mySwipeRefreshLayout.setRefreshing(isLoading);
@@ -162,7 +162,7 @@ public class PaymentHistoryListFragment extends Fragment implements HomeFragment
             }
 
             @Override
-            public void onFailure(Call<Page<PaymentHistory>> call, Throwable t) {
+            public void onFailure(Call<Page<Payment>> call, Throwable t) {
                 ((HomeActivity) getActivity()).displayErrorExitDialog("Error", t.getMessage());
             }
         });
