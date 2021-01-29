@@ -182,7 +182,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         myRegisterButton.startAnimation();
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Void> myReturnedUser = myRestService.addUser(new User(textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString()));
+        Call<Void> myReturnedUser = myRestService.addUser(new User(textInputName.getEditText().getText().toString(), textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString()));
 
         myReturnedUser.enqueue(new Callback<Void>() {
             @Override

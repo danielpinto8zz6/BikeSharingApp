@@ -8,6 +8,7 @@ public interface HomeFragment {
     int FRAGMENT_TYPE_PAYMENT_HISTORY   = 1;
     int FRAGMENT_TYPE_BIKE_HISTORY      = 2;
     int FRAGMENT_TYPE_SETTINGS          = 3;
+    int FRAGMENT_TYPE_BIKE_INFO         = 4;
 
     boolean allowBackPressed();
     int getFragmentType();

@@ -155,48 +155,47 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
         myRecoverButton.revertAnimation();
         myRecoverButton.startAnimation();
 
-
-        //TODO forgetPassword
-        RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<String> myReturnedUser = myRestService.forgetPassword(new User(textInputEmail.getEditText().getText().toString()));
-
-        myReturnedUser.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-
-                if (!response.isSuccessful()) {
-
-                    myRecoverButton.doneLoadingAnimation(R.color.Red, BitmapFactory.decodeResource(getResources(), R.drawable.error_cloud));
-
-                    displayErrorForgotPasswordDialog(HttpStatus.getStatusText(response.code()));
-
-                    myRecoverButton.setClickable(true);
-                    return;
-                }
-
-                myRecoverButton.doneLoadingAnimation(R.color.DarkGreen, BitmapFactory.decodeResource(getResources(), R.drawable.cloud_checked));
-
-                Toast toast = Toast.makeText(getContext(), "Recover done", Toast.LENGTH_LONG);
-                toast.show();
-
-                onLoginClick();
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-
-                myRecoverButton.doneLoadingAnimation(R.color.Red, BitmapFactory.decodeResource(getResources(), R.drawable.error_cloud));
-                myRecoverButton.setClickable(true);
-
-                if (t instanceof SocketTimeoutException) {
-
-                    displayErrorForgotPasswordDialog("Service unavailable, try again later.");
-                    return;
-                }
-
-                displayErrorForgotPasswordDialog("Unknown error");
-            }
-        });
+        //TODO ForgetPassword
+//        RestService myRestService = RestServiceManager.getInstance().getRestService();
+//        Call<String> myReturnedUser = myRestService.updateUser(new User(textInputEmail.getEditText().getText().toString()));
+//
+//        myReturnedUser.enqueue(new Callback<String>() {
+//            @Override
+//            public void onResponse(Call<String> call, Response<String> response) {
+//
+//                if (!response.isSuccessful()) {
+//
+//                    myRecoverButton.doneLoadingAnimation(R.color.Red, BitmapFactory.decodeResource(getResources(), R.drawable.error_cloud));
+//
+//                    displayErrorForgotPasswordDialog(HttpStatus.getStatusText(response.code()));
+//
+//                    myRecoverButton.setClickable(true);
+//                    return;
+//                }
+//
+//                myRecoverButton.doneLoadingAnimation(R.color.DarkGreen, BitmapFactory.decodeResource(getResources(), R.drawable.cloud_checked));
+//
+//                Toast toast = Toast.makeText(getContext(), "Recover done", Toast.LENGTH_LONG);
+//                toast.show();
+//
+//                onLoginClick();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<String> call, Throwable t) {
+//
+//                myRecoverButton.doneLoadingAnimation(R.color.Red, BitmapFactory.decodeResource(getResources(), R.drawable.error_cloud));
+//                myRecoverButton.setClickable(true);
+//
+//                if (t instanceof SocketTimeoutException) {
+//
+//                    displayErrorForgotPasswordDialog("Service unavailable, try again later.");
+//                    return;
+//                }
+//
+//                displayErrorForgotPasswordDialog("Unknown error");
+//            }
+//        });
     }
 
     public void onLoginClick(){

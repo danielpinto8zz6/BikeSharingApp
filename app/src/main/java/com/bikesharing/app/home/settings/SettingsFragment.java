@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -133,7 +134,6 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
         alertName.show();
     }
 
-    //TODO newName
     private void onNewNameClick(String szNewName) {
 
         User myUserInfo = ((HomeActivity) getActivity()).getUserInfo();
@@ -141,11 +141,11 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
         String szToken = ((HomeActivity) getActivity()).getToken();
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<User> myReturnedUser = myRestService.newUserName(new User(myUserInfo.getUsername(), myUserInfo.getPassword()), szToken);
+        Call<Void> myReturnedUser = myRestService.updateUser(new User(myUserInfo.getId(), szNewName, myUserInfo.getUsername(), myUserInfo.getPassword()), szToken);
 
-        myReturnedUser.enqueue(new Callback<User>() {
+        myReturnedUser.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
 
                 if (!response.isSuccessful()) {
 
@@ -153,14 +153,16 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
                     return;
                 }
 
-                ((HomeActivity) getActivity()).setUserInfo(response.body());
+                myUserInfo.setName(szNewName);
+                TextView myUsernameNameTextView = getActivity().findViewById(R.id.welcomeUserName);
+                myUsernameNameTextView.setText(myUserInfo.getName());
 
                 Toast toast = Toast.makeText(getContext(), "New name was set", Toast.LENGTH_LONG);
                 toast.show();
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 displayErrorSettingsDialog("Error setting new name: " + t.getMessage());
             }
         });
@@ -220,7 +222,7 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
         alertName.show();
     }
 
-    //TODO recoverPassword
+    //TODO password
     private void onNewPasswordClick(String szPassword) {
 
         User myUserInfo = ((HomeActivity) getActivity()).getUserInfo();
@@ -228,11 +230,11 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
         String szToken = ((HomeActivity) getActivity()).getToken();
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<User> myReturnedUser = myRestService.newPassword(new User(myUserInfo.getUsername(), myUserInfo.getPassword()), szToken);
+        Call<Void> myReturnedUser = myRestService.updateUser(new User(myUserInfo.getId(), myUserInfo.getName(), myUserInfo.getUsername(), szPassword), szToken);
 
-        myReturnedUser.enqueue(new Callback<User>() {
+        myReturnedUser.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
 
                 if (!response.isSuccessful()) {
 
@@ -240,14 +242,12 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
                     return;
                 }
 
-                ((HomeActivity) getActivity()).setUserInfo(response.body());
-
                 Toast toast = Toast.makeText(getContext(), "New password was set", Toast.LENGTH_LONG);
                 toast.show();
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 displayErrorSettingsDialog("Error setting new password: " + t.getMessage());
             }
         });

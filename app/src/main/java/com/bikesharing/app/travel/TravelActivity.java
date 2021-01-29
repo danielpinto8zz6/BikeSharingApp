@@ -62,12 +62,10 @@ public class TravelActivity extends AppCompatActivity implements
     private PermissionsManager permissionsManager;
     // Variables needed to add the location engine
     private LocationEngine locationEngine;
-    private long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
+    private long DEFAULT_INTERVAL_IN_MILLISECONDS = 5000L;
     private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
     // Variables needed to listen to location updates
     private TravelActivityLocationCallback callback = new TravelActivityLocationCallback(this);
-
-    private Rental myRental;
 
     protected String szToken;
     protected int nRentalId = -1;
@@ -83,6 +81,23 @@ public class TravelActivity extends AppCompatActivity implements
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
         setContentView(R.layout.activity_travel);
+
+        SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+
+        szToken = mySharedPreferences.getString("token", null);
+        if ((szToken == null) ||
+            (szToken.isEmpty())) {
+
+            displayErrorRentalDialog("Missing Token");
+            return;
+        }
+
+        nRentalId = mySharedPreferences.getInt("rental", -1);
+        if (nRentalId == -1) {
+
+            displayErrorRentalDialog("Missing Rental information");
+            return;
+        }
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -107,40 +122,6 @@ public class TravelActivity extends AppCompatActivity implements
         myDialog.show();
     }
 
-    private void startRental(String szToken, String szEmail, Dock myDock) {
-
-        RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Rental> myReturnedUser = myRestService.newRental(new Rental(myDock.getId(), myDock.getBikeId(), szEmail), "Bearer " + szToken);
-
-        myReturnedUser.enqueue(new Callback<Rental>() {
-            @Override
-            public void onResponse(Call<Rental> call, Response<Rental> response) {
-
-                if (!response.isSuccessful()) {
-                    displayErrorRentalDialog(HttpStatus.getStatusText(response.code()));
-                }
-
-                myRental = response.body();
-                nRentalId = myRental.getId();
-                SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
-                mySharedPreferences.edit().putBoolean("isTravelling", Boolean.TRUE).apply();
-                mySharedPreferences.edit().putInt("rental", nRentalId).apply();
-            }
-
-            @Override
-            public void onFailure(Call<Rental> call, Throwable t) {
-
-                if (t instanceof SocketTimeoutException) {
-
-                    displayErrorRentalDialog("Service unavailable, try again later.");
-                    return;
-                }
-
-                displayErrorRentalDialog("Unknown error");
-            }
-        });
-    }
-
     @Override
     public void onBackPressed() {
         // Nothing to be done
@@ -150,13 +131,8 @@ public class TravelActivity extends AppCompatActivity implements
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
 
-        mapboxMap.setStyle(Style.TRAFFIC_DAY,
-                new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        enableLocationComponent(style);
-                    }
-                });
+        mapboxMap.setStyle(Style.LIGHT,
+                style -> enableLocationComponent(style));
     }
 
     /**
@@ -189,6 +165,9 @@ public class TravelActivity extends AppCompatActivity implements
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
             initLocationEngine();
+
+            SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+            mySharedPreferences.edit().putBoolean("isTravelling", Boolean.TRUE).apply();
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
@@ -217,53 +196,17 @@ public class TravelActivity extends AppCompatActivity implements
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(this, "É necessario a localização para conseguires usufruir das bicicletas", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "We need your permissions for the app to work", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPermissionResult(boolean granted) {
         if (granted) {
             if (mapboxMap.getStyle() != null) {
-
                 enableLocationComponent(mapboxMap.getStyle());
-
-                SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
-
-                szToken = mySharedPreferences.getString("token", null);
-                if ((szToken == null) ||
-                        (szToken.isEmpty())) {
-
-                    displayErrorRentalDialog("Missing Token");
-                    return;
-                }
-
-                Dock myDock = (Dock) getIntent().getSerializableExtra("Dock");
-                if (myDock != null) {
-
-                    mySharedPreferences.edit().putInt("bikeId", myDock.getBikeId()).apply();
-
-                    String szEmail = mySharedPreferences.getString("email", null);
-                    if ((szEmail == null) || (szEmail.isEmpty())) {
-
-                        displayErrorRentalDialog("Email info is missing");
-                        return;
-                    }
-
-                    startRental(szToken, szEmail, myDock);
-                } else {
-
-                    nRentalId = mySharedPreferences.getInt("rental", -1);
-                    if (nRentalId == -1) {
-
-                        mySharedPreferences.edit().putBoolean("isTravelling", Boolean.FALSE).apply();
-
-                        displayErrorRentalDialog("Rental id missing");
-                        return;
-                    }
-                }
             }
         } else {
-            Toast.makeText(this, "Tens de aceitar para poderes usufruir dos nossos serviços", Toast.LENGTH_LONG).show();
+            displayErrorRentalDialog("We need your permissions for the app to work");
             finish();
         }
     }

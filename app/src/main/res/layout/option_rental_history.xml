@@ -15,7 +15,7 @@
             android:id="@+id/rentalId"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Rental nº1"
+            android:text="Rental:"
             android:textColor="@color/Black"
             android:textSize="25sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,17 +53,6 @@
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rentalEndDate"
-            />
-
-        <TextView
-            android:id="@+id/rentalDistance"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Distance: 2.35 km"
-            android:textColor="@color/Gray"
-            android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rentalTime"
             />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package com.bikesharing.app.feedback;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import com.bikesharing.app.R;
 import com.bikesharing.app.data.Feedback;
 import com.bikesharing.app.data.User;
 import com.bikesharing.app.home.HomeActivity;
+import com.bikesharing.app.home.settings.SettingsFragment;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
@@ -60,6 +62,8 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         window.setStatusBarColor(getColor(R.color.DarkGreen));
         window.setNavigationBarColor(getColor(R.color.DarkGreen));
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
         this.szToken = mySharedPreferences.getString("token", null);
         this.szEmail = mySharedPreferences.getString("email", null);
@@ -81,7 +85,6 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         myEditTextFeedback = findViewById(R.id.editTextFeedback);
 
         myImageView = findViewById(R.id.exit_feedback_button);
-        myImageView.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_background_light_green));
         myImageView.setOnClickListener(this);
     }
 
@@ -157,6 +160,13 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void onSkipClick(){
+
+        SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+        mySharedPreferences.edit().clear().apply();
+
+        mySharedPreferences.edit().putString("token", this.szToken).apply();
+        mySharedPreferences.edit().putString("email", this.szEmail).apply();
+        mySharedPreferences.edit().putBoolean("isFirstRun", false).apply();
 
         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
         finish();

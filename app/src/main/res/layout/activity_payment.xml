@@ -126,7 +126,7 @@
                         android:id="@+id/creditDate"
                         style="@style/modifiedEditText"
                         android:background="@color/White"
-                        android:hint="Expiration date"
+                        android:hint="Expiration date (MM/YYYY)"
                         android:inputType="date"
                         android:maxLines="1"
                         android:textColor="@color/Gray" />

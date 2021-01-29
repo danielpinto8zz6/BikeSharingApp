@@ -1,5 +1,6 @@
 package com.bikesharing.app.home.rentalHistory;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.Rental;
+import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.home.HomeActivity;
+import com.bikesharing.app.home.rentalHistory.locationHistory.LocationHistoryActivity;
+import com.bikesharing.app.payment.PaymentActivity;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -74,6 +80,18 @@ public class RentalHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Renta
         notifyItemInserted(this.myRentalHistoryDataset.size() - 1);
     }
 
+    private final View.OnClickListener myLocationClickListener = myView -> {
+
+        int nPosition = this.myRecyclerView.getChildLayoutPosition(myView);
+        Rental myRental = myRentalHistoryDataset.get(nPosition);
+
+        Intent myIntent = new Intent(myHomeActivity.getApplicationContext(), LocationHistoryActivity.class);
+        myIntent.putExtra("rental", myRental);
+
+        myHomeActivity.startActivity(myIntent);
+        myHomeActivity.finish();
+    };
+
     // Create new views (invoked by the layout manager)
     @NotNull
     @Override
@@ -81,6 +99,7 @@ public class RentalHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Renta
 
         // create a new view
         View myOptionDock = LayoutInflater.from(parent.getContext()).inflate(R.layout.option_rental_history, parent, false);
+        myOptionDock.setOnClickListener(myLocationClickListener);
         return new MyViewHolder(myOptionDock);
     }
 
@@ -122,15 +141,34 @@ public class RentalHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Renta
                 / (1000 * 60 * 60 * 24))
                 % 365;
 
-        return difference_In_Years
-                        + " years, "
-                        + difference_In_Days
-                        + " days, "
-                        + difference_In_Hours
-                        + ":"
-                        + difference_In_Minutes
-                        + ":"
-                        + difference_In_Seconds;
+
+        if (difference_In_Years > 0) {
+
+            return difference_In_Years
+                    + " years, "
+                    + difference_In_Days
+                    + " days, "
+                    + difference_In_Hours
+                    + ":"
+                    + difference_In_Minutes
+                    + ":"
+                    + difference_In_Seconds;
+        } else if (difference_In_Days > 0) {
+
+            return difference_In_Days
+                    + " days, "
+                    + difference_In_Hours
+                    + ":"
+                    + difference_In_Minutes
+                    + ":"
+                    + difference_In_Seconds;
+        } else {
+            return difference_In_Hours
+                    + ":"
+                    + difference_In_Minutes
+                    + ":"
+                    + difference_In_Seconds;
+        }
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -139,10 +177,20 @@ public class RentalHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Renta
 
         Rental myRentalHistoryDataset = this.myRentalHistoryDataset.get(position);
 
+        SimpleDateFormat mySimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         myOptionDock.myRentalId.setText("Rental nº" + myRentalHistoryDataset.getId());
-        myOptionDock.myRentalStartDate.setText("Started:" + myRentalHistoryDataset.getStartDate().toString());
-        myOptionDock.myRentalEndDate.setText("Ended:" + myRentalHistoryDataset.getEndDate().toString());
-        myOptionDock.myRentalTime.setText("Time:" + findDifference(myRentalHistoryDataset.getStartDate(), myRentalHistoryDataset.getEndDate()));
+        try {
+
+            myOptionDock.myRentalStartDate.setText("Started:" + mySimpleDateFormat.parse(myRentalHistoryDataset.getStartDate().toString()).toString());
+            myOptionDock.myRentalEndDate.setText("Ended:" + mySimpleDateFormat.parse(myRentalHistoryDataset.getEndDate().toString()).toString());
+            myOptionDock.myRentalTime.setText("Time:" + findDifference(myRentalHistoryDataset.getStartDate(), myRentalHistoryDataset.getEndDate()));
+
+        } catch (ParseException e) {
+            myOptionDock.myRentalStartDate.setText("Started: Unknown");
+            myOptionDock.myRentalEndDate.setText("Ended: Unknown");
+            myOptionDock.myRentalTime.setText("Time: Unknown");
+        }
 
     }
 

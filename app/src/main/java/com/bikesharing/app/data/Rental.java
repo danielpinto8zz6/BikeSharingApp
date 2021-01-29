@@ -2,9 +2,10 @@ package com.bikesharing.app.data;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Rental {
+public class Rental implements Serializable {
 
     @SerializedName("id")
     private Integer id;
@@ -24,20 +25,24 @@ public class Rental {
     @SerializedName("endDate")
     private Date endDate;
 
+    @SerializedName("bikeCode")
+    private String bikeCode;
 
-    public Rental(Integer dockId, Integer bikeId, String userEmail) {
+    public Rental(Integer dockId, Integer bikeId, String userEmail, String bikeCode) {
         this.dockId = dockId;
         this.bikeId = bikeId;
         this.userEmail = userEmail;
+        this.bikeCode = bikeCode;
     }
 
-    public Rental(Integer id, Integer dockId, Integer bikeId, String userEmail, Date startDate, Date endDate) {
+    public Rental(Integer id, Integer dockId, Integer bikeId, String userEmail, Date startDate, Date endDate, String bikeCode) {
         this.id = id;
         this.dockId = dockId;
         this.bikeId = bikeId;
         this.userEmail = userEmail;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.bikeCode = bikeCode;
     }
 
     public Integer getId() {
@@ -86,5 +91,13 @@ public class Rental {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getBikeCode() {
+        return bikeCode;
+    }
+
+    public void setBikeCode(String bikeCode) {
+        this.bikeCode = bikeCode;
     }
 }

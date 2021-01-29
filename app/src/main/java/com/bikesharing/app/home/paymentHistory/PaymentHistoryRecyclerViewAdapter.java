@@ -78,11 +78,15 @@ public class PaymentHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Paym
         int nPosition = this.myRecyclerView.getChildLayoutPosition(myView);
         Payment myPayment = myPaymentHistoryDataset.get(nPosition);
 
-        Intent myIntent = new Intent(myHomeActivity.getApplicationContext(), PaymentActivity.class);
-        myIntent.putExtra("Payment", myPayment);
+        if (myPayment.getStatus() == Payment.PAYMENT_FAILED || myPayment.getStatus() == Payment.AWAITING_PAYMENT) {
 
-        myHomeActivity.startActivity(myIntent);
-        myHomeActivity.finish();
+            Intent myIntent = new Intent(myHomeActivity.getApplicationContext(), PaymentActivity.class);
+            myIntent.putExtra("payment", myPayment);
+            myIntent.putExtra("paymentHistory", true);
+
+            myHomeActivity.startActivity(myIntent);
+            myHomeActivity.finish();
+        }
     };
 
     // Create new views (invoked by the layout manager)
@@ -103,7 +107,7 @@ public class PaymentHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Paym
         Payment myPaymentHistoryDataset = this.myPaymentHistoryDataset.get(position);
 
         myOptionDock.myPaymentAmount.setText(String.valueOf(myPaymentHistoryDataset.getValue()));
-        myOptionDock.myPaymentStatus.setText("Status: " + String.valueOf(myPaymentHistoryDataset.getStatus()));
+        myOptionDock.myPaymentStatus.setText("Status: " + myPaymentHistoryDataset.getStatusString());
         myOptionDock.myPaymentDate.setText("Date: " + myPaymentHistoryDataset.getTimestamp().toString());
     }
 

@@ -17,6 +17,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.EmailToken;
+import com.bikesharing.app.data.Rental;
 import com.bikesharing.app.data.User;
 import com.bikesharing.app.data.payment.Invoice;
 import com.bikesharing.app.data.payment.Payment;
@@ -25,6 +26,7 @@ import com.bikesharing.app.payment.PaymentActivity;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
+import com.bikesharing.app.travel.TravelActivity;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -62,14 +64,10 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
         // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
         // [END_EXCLUDE]
 
-        // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
             Gson gson = new Gson();
             JsonElement jsonElement = gson.toJsonTree(remoteMessage.getData());
@@ -83,8 +81,20 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+
+            if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("Enjoy your ride!")) {
+
+                Intent dialogIntent = new Intent(this, TravelActivity.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(dialogIntent);
+            } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("Failed to validate bike code!")) {
+
+                Intent dialogIntent = new Intent(this, HomeActivity.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(dialogIntent);
+            } else {
+                sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+            }
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM

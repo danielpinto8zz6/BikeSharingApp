@@ -25,7 +25,7 @@ public class RestServiceManager {
                     .create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://34.76.92.16/")
+                    .baseUrl("http://34.78.122.193/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 

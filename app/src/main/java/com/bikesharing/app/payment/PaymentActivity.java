@@ -20,6 +20,7 @@ import com.bikesharing.app.R;
 import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.data.payment.PaymentRequest;
 import com.bikesharing.app.feedback.FeedbackActivity;
+import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.bikesharing.app.sign.SignActivity;
@@ -46,7 +47,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     private String szToken;
 
     private Payment myPayment;
-    private int nRentalId  = -1;
+    private boolean isPaymentHistory = false;
 
     private boolean bIsPaymentValid = true;
     private boolean bIsCreditNameValid = false;
@@ -73,13 +74,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
             startActivity(new Intent(getApplicationContext(), SignActivity.class));
             finish();
-        }
-
-        this.nRentalId = mySharedPreferences.getInt("rental", -1);
-        if (this.nRentalId == -1) {
-
-            startActivity(new Intent(getApplicationContext(), SignActivity.class));
-            finish();
+            return;
         }
 
         this.myPayment = (Payment) getIntent().getSerializableExtra("payment");
@@ -87,7 +82,12 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
             startActivity(new Intent(getApplicationContext(), SignActivity.class));
             finish();
+            return;
         }
+
+        mySharedPreferences.edit().putBoolean("isTravelling", Boolean.FALSE).apply();
+
+        this.isPaymentHistory = getIntent().getBooleanExtra("paymentHistory", false);
 
         //mySharedPreferences.edit().remove("rental").apply();
 
@@ -173,8 +173,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        Intent myIntent = new Intent(getApplicationContext(), FeedbackActivity.class);
-        myIntent.putExtra("rental", this.nRentalId);
+        if (!this.isPaymentHistory) {
+
+            Intent myIntent = new Intent(getApplicationContext(), FeedbackActivity.class);
+            myIntent.putExtra("rental", this.myPayment.getRentalId());
+            startActivity(myIntent);
+            finish();
+            return;
+        }
+
+        Intent myIntent = new Intent(getApplicationContext(), HomeActivity.class);
         startActivity(myIntent);
         finish();
     }

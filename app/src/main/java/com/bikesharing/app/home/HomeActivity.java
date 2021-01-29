@@ -1,10 +1,12 @@
 package com.bikesharing.app.home;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bikesharing.app.R;
@@ -44,6 +47,8 @@ public class HomeActivity extends AppCompatActivity {
     private String szToken;
     private String szEmail;
     private static final String TAG = "HomeActivity";
+
+    private final int LOCATION_REQUEST_ID = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,23 +85,30 @@ public class HomeActivity extends AppCompatActivity {
 
             getRestUserInfo(this.szEmail, this.szToken);
 
-            if (mySharedPreferences.getBoolean("isTravelling", Boolean.FALSE) == Boolean.TRUE) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                Intent myIntent = new Intent(getApplicationContext(), TravelActivity.class);
-                myIntent.putExtra("Email", this.szEmail);
+                requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_ID);
+            } else {
 
-                startActivity(myIntent);
-                finish();
+                if (mySharedPreferences.getBoolean("isTravelling", Boolean.FALSE) == Boolean.TRUE) {
+
+                    Intent myIntent = new Intent(getApplicationContext(), TravelActivity.class);
+                    myIntent.putExtra("Email", this.szEmail);
+
+                    startActivity(myIntent);
+                    finish();
+                }
+
+                BottomNavigationView myBottomNavigationView = findViewById(R.id.bottomMenu);
+                myBottomNavigationView.setOnNavigationItemSelectedListener(new OnNavigationItemSelected());
+
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, android.R.anim.fade_out)
+                        .add(R.id.fragment_home_container, new DockListFragment(), HomeFragment.FRAGMENT_TAG)
+                        .addToBackStack(null)
+                        .commit();
             }
-
-            BottomNavigationView myBottomNavigationView = findViewById(R.id.bottomMenu);
-            myBottomNavigationView.setOnNavigationItemSelectedListener(new OnNavigationItemSelected());
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_right, android.R.anim.fade_out)
-                    .add(R.id.fragment_home_container, new DockListFragment(), HomeFragment.FRAGMENT_TAG)
-                    .addToBackStack(null)
-                    .commit();
         }
 
 
@@ -134,6 +146,38 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_REQUEST_ID:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&  grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
+                    if (mySharedPreferences.getBoolean("isTravelling", Boolean.FALSE) == Boolean.TRUE) {
+
+                        Intent myIntent = new Intent(getApplicationContext(), TravelActivity.class);
+                        myIntent.putExtra("Email", this.szEmail);
+
+                        startActivity(myIntent);
+                        finish();
+                    }
+
+                    BottomNavigationView myBottomNavigationView = findViewById(R.id.bottomMenu);
+                    myBottomNavigationView.setOnNavigationItemSelectedListener(new OnNavigationItemSelected());
+
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, android.R.anim.fade_out)
+                            .add(R.id.fragment_home_container, new DockListFragment(), HomeFragment.FRAGMENT_TAG)
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    displayErrorExitDialog("Email", "Email Missing");
+                }
+                break;
+        }
+    }
+
+    @Override
     public void onBackPressed() {
 
         HomeFragment myHomeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.FRAGMENT_TAG);
@@ -168,9 +212,9 @@ public class HomeActivity extends AppCompatActivity {
                     return;
                 }
 
-                myUserInfo = new User(response.body().getUsername(), response.body().getPassword());
+                myUserInfo = response.body();
                 TextView myUsernameNameTextView = findViewById(R.id.welcomeUserName);
-                myUsernameNameTextView.setText(myUserInfo.getUsername());
+                myUsernameNameTextView.setText(myUserInfo.getName());
             }
 
             @Override
@@ -182,10 +226,6 @@ public class HomeActivity extends AppCompatActivity {
 
     public String getToken() {
         return szToken;
-    }
-
-    public void setUserInfo(User myUserInfo) {
-        this.myUserInfo = myUserInfo;
     }
 
     public User getUserInfo() {
@@ -201,6 +241,10 @@ public class HomeActivity extends AppCompatActivity {
 
             SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
             mySharedPreferences.edit().clear().apply();
+
+            mySharedPreferences.edit().putString("token", this.szToken).apply();
+            mySharedPreferences.edit().putString("email", this.szEmail).apply();
+            mySharedPreferences.edit().putBoolean("isFirstRun", false).apply();
 
             startActivity(new Intent(getApplicationContext(), SignActivity.class));
 
@@ -295,6 +339,7 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case HomeFragment.FRAGMENT_TYPE_DOCK_LIST:
+                case HomeFragment.FRAGMENT_TYPE_BIKE_INFO:
                 default:
                     myNewFragment = new DockListFragment();
                     break;

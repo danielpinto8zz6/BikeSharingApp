@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dock_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/WhiteSmoke"
+    android:orientation="vertical">
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/bikeInfoGif"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="-30dp"
+        android:layout_marginBottom="-30dp"
+        android:src="@drawable/bike_info"
+        />
+
+    <TextView
+        style="@style/viewParent.headerText.NoMode"
+        android:layout_gravity="center_horizontal"
+        android:text="BIKE INFORMATION" />
+
+    <TextView
+        style="@style/parent"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:text="Brand"
+        android:textAlignment="center"
+        android:textColor="@color/Black"
+        android:textSize="20sp" />
+
+    <TextView
+        style="@style/parent"
+        android:id="@+id/bikeBrandModel"
+        android:layout_marginTop="10dp"
+        android:text="XXXXXXX"
+        android:textAlignment="center"
+        android:textColor="@color/Gray"
+        android:textSize="17sp" />
+
+    <TextView
+        style="@style/parent"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:text="Location"
+        android:textAlignment="center"
+        android:textColor="@color/Black"
+        android:textSize="20sp" />
+
+    <TextView
+        style="@style/parent"
+        android:id="@+id/bikeLocation"
+        android:layout_marginTop="10dp"
+        android:text="XXXXXXX"
+        android:textAlignment="center"
+        android:textColor="@color/Gray"
+        android:textSize="17sp" />
+
+    <TextView
+        style="@style/parent"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:text="Charge Level"
+        android:textAlignment="center"
+        android:textColor="@color/Black"
+        android:textSize="20sp" />
+
+    <TextView
+        style="@style/parent"
+        android:id="@+id/bikeChargeLevel"
+        android:layout_marginTop="10dp"
+        android:text="XXX %"
+        android:textAlignment="center"
+        android:textColor="@color/Gray"
+        android:textSize="17sp" />
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/cirGoToBikeButton"
+        style="@style/loginButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:layout_marginLeft="10dp"
+        android:text="Travel to Bike"
+        app:initialCornerAngle="27dp"
+        app:spinning_bar_color="#FFF"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/cirInsertCodeButton"
+        style="@style/loginButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:layout_marginLeft="10dp"
+        android:text="Unlock bike"
+        app:initialCornerAngle="27dp"
+        app:spinning_bar_color="#FFF"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp"
+        app:layout_constraintStart_toEndOf="@+id/cirGoToBikeButton"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</LinearLayout>

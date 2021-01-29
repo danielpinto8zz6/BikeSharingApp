@@ -3,6 +3,7 @@ package com.bikesharing.app.gps;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +11,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 // classes needed to initialize map
 import com.bikesharing.app.R;
+import com.bikesharing.app.data.Dock;
 import com.bikesharing.app.home.HomeActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -52,6 +56,8 @@ public class GpsActivity extends AppCompatActivity implements OnMapReadyCallback
     private MapView mapView;
     private MapboxMap mapboxMap;
 
+    private Dock myDock;
+
     // variables for calculating and drawing a route
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
@@ -60,6 +66,8 @@ public class GpsActivity extends AppCompatActivity implements OnMapReadyCallback
     private Button myReturnCodeButton;
 
     private Button myStartButton;
+
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +86,20 @@ public class GpsActivity extends AppCompatActivity implements OnMapReadyCallback
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        this.myDock = (Dock) getIntent().getSerializableExtra("Dock");
+        if (myDock == null) {
+
+            Toast.makeText(this, "Dock is missing", Toast.LENGTH_LONG);
+            rejectDockSelected();
+        }
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
@@ -90,29 +107,38 @@ public class GpsActivity extends AppCompatActivity implements OnMapReadyCallback
 
             addDestinationIconSymbolLayer(style);
 
-            CameraPosition myPosition = new CameraPosition.Builder()
-                    .target(new LatLng(41.1648446,-8.5878988))
-                    .zoom(15)
-                    .tilt(20)
-                    .build();
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, myLocation -> {
 
-            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(myPosition));
+                if (myLocation == null) {
 
-            Point destinationPoint = Point.fromLngLat( -8.585500,41.161795);
-            Point originPoint = Point.fromLngLat(-8.5878988, 41.1648446);
+                    Toast.makeText(this, "Can not get your location please try again", Toast.LENGTH_LONG);
+                    rejectDockSelected();
+                }
 
-            GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
-            if (source != null) {
-                source.setGeoJson(Feature.fromGeometry(destinationPoint));
-            }
+                CameraPosition myPosition = new CameraPosition.Builder()
+                        .target(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
+                        .zoom(15)
+                        .tilt(20)
+                        .build();
 
-            getRoute(originPoint, destinationPoint);
+                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(myPosition));
 
-            myReturnCodeButton = findViewById(R.id.returnButton);
-            myReturnCodeButton.setOnClickListener(v -> rejectDockSelected());
+                Point destinationPoint = Point.fromLngLat(myDock.getLongitude(), myDock.getLatitude());
+                Point originPoint = Point.fromLngLat(myLocation.getLongitude(), myLocation.getLatitude());
 
-            myStartButton = findViewById(R.id.startButton);
-            myStartButton.setOnClickListener(v-> beginStartNavigation());
+                GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
+                if (source != null) {
+                    source.setGeoJson(Feature.fromGeometry(destinationPoint));
+                }
+
+                getRoute(originPoint, destinationPoint);
+
+                myReturnCodeButton = findViewById(R.id.returnButton);
+                myReturnCodeButton.setOnClickListener(v -> rejectDockSelected());
+
+                myStartButton = findViewById(R.id.startButton);
+                myStartButton.setOnClickListener(v-> beginStartNavigation());
+            });
         });
     }
 

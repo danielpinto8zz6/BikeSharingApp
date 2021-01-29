@@ -68,7 +68,7 @@ public class PaymentHistoryListFragment extends Fragment implements HomeFragment
             this.szToken = mySharedPreferences.getString("token", null);
 
             if ((this.szToken == null) ||
-                    (this.szToken.isEmpty())) {
+                (this.szToken.isEmpty())) {
 
                 ((HomeActivity) getActivity()).displayErrorExitDialog("Token", "Missing Token");
                 return;

@@ -5,12 +5,10 @@ package com.bikesharing.app.rest;
  * All status codes defined in RFC1945 (HTTP/1.0, RFC2616 (HTTP/1.1), and
  * RFC2518 (WebDAV) are supported.
  *
- * @see StatusLine
  * @author Unascribed
  * @author Mike Bowler
  * @author Jeff Dever
  *
- * TODO: Internationalization of reason phrases
  *
  * @version $Id: HttpStatus.java 480424 2006-11-29 05:56:49Z bayard $
  */
@@ -42,7 +40,6 @@ public class HttpStatus {
      * @return the reason phrase associated with the given status code
      * or null if the status code is not recognized.
      *
-     * TODO: getStatusText should be called getReasonPhrase to match RFC
      */
     public static String getStatusText(int statusCode) {
 

@@ -2,8 +2,13 @@ package com.bikesharing.app.data;
 
 import com.google.gson.annotations.SerializedName;
 
-//TODO add email
 public class User {
+
+    @SerializedName("id")
+    private Integer id;
+
+    @SerializedName("name")
+    private String name;
 
     @SerializedName("username")
     private String username;
@@ -15,9 +20,38 @@ public class User {
         this.username = username;
     }
 
+    public User(String name, String username, String password) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(Integer id, String name, String username, String password) {
+        this.id = id;
+        this.name = name;
+        this.username = username;
+        this.password = password;
+    }
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUsername() {
