@@ -49,6 +49,9 @@ public interface RestService {
     @GET("/payment/payment")
     Call<Page<Payment>> getAllPaymentHistory(@Query("page") int nPage, @Query("size") int nSizePage, @Header("Authorization") String authHeader);
 
+    @GET("/payment/payment/rental/{rentalId}")
+    Call<Payment> getPaymentByRentalId(@Path("rentalId") int rentalId, @Header("Authorization") String authHeader);
+
     @GET("/travel-history/travel/{rentalId}")
     Call<List<TravelEvent>> getAllLocationHistory(@Path("rentalId") int nRentalId, @Header("Authorization") String authHeader);
 

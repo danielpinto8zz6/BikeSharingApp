@@ -8,9 +8,12 @@ import com.bikesharing.app.R;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.TextView;
 
+import com.bikesharing.app.data.Bike;
 import com.bikesharing.app.data.Rental;
 import com.bikesharing.app.data.TravelEvent;
+import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.home.HomeActivity;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
@@ -38,12 +41,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LocationHistoryActivity extends AppCompatActivity  implements OnMapReadyCallback {
+public class LocationHistoryActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private MapView mapView;
 
     private Rental myRental;
     protected String szToken;
+
+    private TextView tvBikeName;
+    private TextView tvPaymentValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,7 @@ public class LocationHistoryActivity extends AppCompatActivity  implements OnMap
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
         szToken = mySharedPreferences.getString("token", null);
         if ((szToken == null) ||
-            (szToken.isEmpty())) {
+                (szToken.isEmpty())) {
 
             displayErrorLocationHistoryDialog("Missing Token");
             return;
@@ -70,9 +76,76 @@ public class LocationHistoryActivity extends AppCompatActivity  implements OnMap
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        TextView tvEndDate = findViewById(R.id.tvEndDate);
+        TextView tvStartDate = findViewById(R.id.tvStartDate);
+        this.tvPaymentValue = findViewById(R.id.tvPaymentValue);
+        this.tvBikeName = findViewById(R.id.tvBikeName);
+
+        tvStartDate.setText(this.myRental.getStartDate().toString());
+        tvEndDate.setText(this.myRental.getEndDate().toString());
+
+        loadPayment();
+        loadBike();
     }
 
-    private void displayErrorLocationHistoryDialog(String szMessage){
+    private void loadBike() {
+        RestService myRestService = RestServiceManager.getInstance().getRestService();
+        Call<Bike> bikeRequest = myRestService.getBikeDetails(this.myRental.getBikeId(), "Bearer " + szToken);
+
+        bikeRequest.enqueue(new Callback<Bike>() {
+
+            @Override
+            public void onResponse(Call<Bike> call, Response<Bike> response) {
+                if (!response.isSuccessful()) {
+
+                    displayErrorLocationHistoryDialog(HttpStatus.getStatusText(response.code()));
+                    return;
+                }
+
+                Bike bike = response.body();
+
+                if (bike != null) {
+                    tvBikeName.setText(bike.getBrand() + " " + bike.getModel() + " $");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Bike> call, Throwable t) {
+                displayErrorLocationHistoryDialog(t.getMessage());
+            }
+        });
+    }
+
+    private void loadPayment() {
+        RestService myRestService = RestServiceManager.getInstance().getRestService();
+        Call<Payment> paymentRequest = myRestService.getPaymentByRentalId(this.myRental.getId(), "Bearer " + szToken);
+
+        paymentRequest.enqueue(new Callback<Payment>() {
+
+            @Override
+            public void onResponse(Call<Payment> call, Response<Payment> response) {
+                if (!response.isSuccessful()) {
+
+                    displayErrorLocationHistoryDialog(HttpStatus.getStatusText(response.code()));
+                    return;
+                }
+
+                Payment payment = response.body();
+
+                if (payment != null) {
+                    tvPaymentValue.setText(payment.getValue() + " $");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Payment> call, Throwable t) {
+                displayErrorLocationHistoryDialog(t.getMessage());
+            }
+        });
+    }
+
+    private void displayErrorLocationHistoryDialog(String szMessage) {
 
         AlertDialog myDialog = new AlertDialog.Builder(this).create();
         myDialog.setTitle("Location History Error!");
@@ -110,7 +183,7 @@ public class LocationHistoryActivity extends AppCompatActivity  implements OnMap
                     return;
                 }
 
-                for (TravelEvent myTravelEvent: response.body()) {
+                for (TravelEvent myTravelEvent : response.body()) {
 
                     LatLng myLatLng = new LatLng(myTravelEvent.getLatitude(), myTravelEvent.getLongitude());
                     myMapbox.addMarker(new MarkerOptions().position(myLatLng));
