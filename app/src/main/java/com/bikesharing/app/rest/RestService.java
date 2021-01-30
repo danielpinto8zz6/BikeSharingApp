@@ -34,6 +34,9 @@ public interface RestService {
     @PUT("/account/user")
     Call<Void> updateUser(@Body User user, @Header("Authorization") String authHeader);
 
+    @PUT("/account/user/password")
+    Call<Void> updatePassword(@Body User user, @Header("Authorization") String authHeader);
+
     @GET("/account/user/{email}")
     Call<User> getUserByEmail(@Path("email") String email, @Header("Authorization") String authHeader);
 

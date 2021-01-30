@@ -177,16 +177,14 @@ public class RentalHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Renta
 
         Rental myRentalHistoryDataset = this.myRentalHistoryDataset.get(position);
 
-        SimpleDateFormat mySimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
         myOptionDock.myRentalId.setText("Rental nº" + myRentalHistoryDataset.getId());
         try {
 
-            myOptionDock.myRentalStartDate.setText("Started:" + mySimpleDateFormat.parse(myRentalHistoryDataset.getStartDate().toString()).toString());
-            myOptionDock.myRentalEndDate.setText("Ended:" + mySimpleDateFormat.parse(myRentalHistoryDataset.getEndDate().toString()).toString());
-            myOptionDock.myRentalTime.setText("Time:" + findDifference(myRentalHistoryDataset.getStartDate(), myRentalHistoryDataset.getEndDate()));
+            myOptionDock.myRentalStartDate.setText("Started: " + myRentalHistoryDataset.getStartDate().toString());
+            myOptionDock.myRentalEndDate.setText("Ended: " + myRentalHistoryDataset.getEndDate().toString());
+            myOptionDock.myRentalTime.setText("Time: " + findDifference(myRentalHistoryDataset.getStartDate(), myRentalHistoryDataset.getEndDate()));
 
-        } catch (ParseException e) {
+        } catch (Exception e) {
             myOptionDock.myRentalStartDate.setText("Started: Unknown");
             myOptionDock.myRentalEndDate.setText("Ended: Unknown");
             myOptionDock.myRentalTime.setText("Time: Unknown");

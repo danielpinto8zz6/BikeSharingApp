@@ -62,8 +62,8 @@ public class TravelActivity extends AppCompatActivity implements
     private PermissionsManager permissionsManager;
     // Variables needed to add the location engine
     private LocationEngine locationEngine;
-    private long DEFAULT_INTERVAL_IN_MILLISECONDS = 5000L;
-    private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
+    private long DEFAULT_INTERVAL_IN_MILLISECONDS = 2000L;
+    private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 2;
     // Variables needed to listen to location updates
     private TravelActivityLocationCallback callback = new TravelActivityLocationCallback(this);
 

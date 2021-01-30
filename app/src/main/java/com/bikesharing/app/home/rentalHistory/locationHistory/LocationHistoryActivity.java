@@ -19,6 +19,12 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.BaseMarkerOptions;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -84,13 +90,13 @@ public class LocationHistoryActivity extends AppCompatActivity  implements OnMap
     @Override
     public void onMapReady(final MapboxMap mapboxMap) {
 
-        mapboxMap.setStyle(Style.LIGHT, this::loadLocationHistory);
+        mapboxMap.setStyle(Style.LIGHT, style -> loadLocationHistory(mapboxMap, style));
     }
 
-    private void loadLocationHistory(Style style) {
-        List<Feature> myFeatures = new ArrayList<>();
+    private void loadLocationHistory(MapboxMap myMapbox, Style style) {
 
-        //TODO Check if works
+        List<LatLng> myLatLngs = new ArrayList<>();
+
         RestService myRestService = RestServiceManager.getInstance().getRestService();
         Call<List<TravelEvent>> myReturnedLocation = myRestService.getAllLocationHistory(this.myRental.getId(), "Bearer " + szToken);
 
@@ -106,12 +112,14 @@ public class LocationHistoryActivity extends AppCompatActivity  implements OnMap
 
                 for (TravelEvent myTravelEvent: response.body()) {
 
-                    myFeatures.add(Feature.fromGeometry(Point.fromLngLat(
-                            myTravelEvent.getLongitude(),
-                            myTravelEvent.getLatitude())));
+                    LatLng myLatLng = new LatLng(myTravelEvent.getLatitude(), myTravelEvent.getLongitude());
+                    myMapbox.addMarker(new MarkerOptions().position(myLatLng));
+                    myLatLngs.add(myLatLng);
                 }
 
-                style.addSource(new GeoJsonSource("LocationsHistory", FeatureCollection.fromFeatures(myFeatures)));
+                LatLngBounds latLngBounds = new LatLngBounds.Builder().includes(myLatLngs).build();
+
+                myMapbox.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
             }
 
             @Override

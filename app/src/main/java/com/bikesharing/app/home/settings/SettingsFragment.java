@@ -141,7 +141,7 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
         String szToken = ((HomeActivity) getActivity()).getToken();
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Void> myReturnedUser = myRestService.updateUser(new User(myUserInfo.getId(), szNewName, myUserInfo.getUsername(), myUserInfo.getPassword()), szToken);
+        Call<Void> myReturnedUser = myRestService.updateUser(new User(myUserInfo.getId(), szNewName, myUserInfo.getUsername(), myUserInfo.getPassword()), "Bearer " + szToken);
 
         myReturnedUser.enqueue(new Callback<Void>() {
             @Override
@@ -222,7 +222,6 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
         alertName.show();
     }
 
-    //TODO password
     private void onNewPasswordClick(String szPassword) {
 
         User myUserInfo = ((HomeActivity) getActivity()).getUserInfo();
@@ -230,7 +229,7 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
         String szToken = ((HomeActivity) getActivity()).getToken();
 
         RestService myRestService = RestServiceManager.getInstance().getRestService();
-        Call<Void> myReturnedUser = myRestService.updateUser(new User(myUserInfo.getId(), myUserInfo.getName(), myUserInfo.getUsername(), szPassword), szToken);
+        Call<Void> myReturnedUser = myRestService.updatePassword(new User(myUserInfo.getId(), szPassword), "Bearer " + szToken);
 
         myReturnedUser.enqueue(new Callback<Void>() {
             @Override
@@ -242,6 +241,7 @@ public class SettingsFragment extends Fragment implements HomeFragment, View.OnC
                     return;
                 }
 
+                myUserInfo.setPassword(szPassword);
                 Toast toast = Toast.makeText(getContext(), "New password was set", Toast.LENGTH_LONG);
                 toast.show();
             }

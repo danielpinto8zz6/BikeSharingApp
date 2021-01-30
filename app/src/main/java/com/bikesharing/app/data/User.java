@@ -38,6 +38,11 @@ public class User {
         this.password = password;
     }
 
+    public User(Integer id, String password) {
+        this.id = id;
+        this.password = password;
+    }
+
     public Integer getId() {
         return id;
     }

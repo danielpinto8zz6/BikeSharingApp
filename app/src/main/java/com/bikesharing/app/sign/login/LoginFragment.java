@@ -30,7 +30,6 @@ import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.bikesharing.app.sign.SignFragment;
-import com.bikesharing.app.sign.forgot.ForgotPasswordFragment;
 import com.bikesharing.app.sign.register.RegisterFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -86,12 +85,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Sig
         TextView myRegisterText =  view.findViewById(R.id.regist_text);
         myRegisterText.setOnClickListener(this);
 
-        ImageView myForgotPasswordButton = view.findViewById(R.id.forgotPassword_button);
-        myForgotPasswordButton.setOnClickListener(this);
-
-        TextView myForgotPasswordText =  view.findViewById(R.id.forgotPassword);
-        myForgotPasswordText.setOnClickListener(this);
-
         myLoginButton =  view.findViewById(R.id.cirLoginButton);
         myLoginButton.setBackgroundDrawable(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.button_background_light_green));
         myLoginButton.setOnClickListener(this);
@@ -134,11 +127,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Sig
             case R.id.regist_text:
 
                 onRegistClick();
-                break;
-
-            case R.id.forgotPassword:
-            case R.id.forgotPassword_button:
-                onForgotClick();
                 break;
 
             case R.id.cirLoginButton:
@@ -243,19 +231,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Sig
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, android.R.anim.fade_out)
                 .replace(R.id.fragment_container, myRegisterFragment, SignFragment.FRAGMENT_TAG)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    public void onForgotClick(){
-
-        clearForm();
-
-        ForgotPasswordFragment myForgotFragment = new ForgotPasswordFragment();
-
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_left, android.R.anim.fade_out)
-                .replace(R.id.fragment_container, myForgotFragment, SignFragment.FRAGMENT_TAG)
                 .addToBackStack(null)
                 .commit();
     }

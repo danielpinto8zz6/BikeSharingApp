@@ -79,17 +79,6 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                style="@style/viewParent"
-                android:id="@+id/forgotPassword"
-                android:layout_gravity="end"
-                android:layout_marginTop="10dp"
-                android:text="Forgot Password?"
-                android:textColor="@color/DarkGreen"
-                android:textSize="@dimen/newsMoreTextSize"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"/>
-
             <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
                 android:id="@+id/cirLoginButton"
                 style="@style/loginButton"
@@ -122,13 +111,4 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"
         android:src="@drawable/ic_add_img" />
-
-    <ImageView
-        android:id="@+id/forgotPassword_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:src="@drawable/ic_forgot_img" />
 </RelativeLayout>

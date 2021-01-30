@@ -3,12 +3,10 @@ package com.bikesharing.app.feedback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -16,23 +14,13 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.bikesharing.app.R;
 import com.bikesharing.app.data.Feedback;
-import com.bikesharing.app.data.User;
 import com.bikesharing.app.home.HomeActivity;
-import com.bikesharing.app.home.settings.SettingsFragment;
-import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
 import com.bikesharing.app.sign.SignActivity;
-import com.bikesharing.app.sign.SignFragment;
-import com.bikesharing.app.sign.forgot.ForgotPasswordFragment;
-import com.bikesharing.app.sign.login.LoginFragment;
-
-import java.net.SocketTimeoutException;
-import java.util.Scanner;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import retrofit2.Call;
