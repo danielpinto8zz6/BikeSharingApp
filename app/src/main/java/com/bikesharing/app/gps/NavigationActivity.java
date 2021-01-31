@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 
 import com.bikesharing.app.R;
 import com.bikesharing.app.home.HomeActivity;
+import com.bikesharing.app.rental.RentalActivity;
 import com.bikesharing.app.travel.TravelActivity;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.services.android.navigation.ui.v5.NavigationView;
@@ -45,7 +46,7 @@ public class NavigationActivity extends AppCompatActivity implements OnNavigatio
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         window.setStatusBarColor(getColor(R.color.DarkGreen));
         window.setNavigationBarColor(getColor(R.color.White));
 
@@ -73,8 +74,9 @@ public class NavigationActivity extends AppCompatActivity implements OnNavigatio
 
         alertUnlockCode.setPositiveButton("Continue", (dialog, whichButton) -> {
 
-            Intent myIntent = new Intent(getApplicationContext(), TravelActivity.class);
+            Intent myIntent = new Intent(getApplicationContext(), RentalActivity.class);
             myIntent.putExtra("Dock", getIntent().getSerializableExtra("Dock"));
+            myIntent.putExtra("bikeCode", editTextName1.getText().toString());
 
             startActivity(myIntent);
             finish();

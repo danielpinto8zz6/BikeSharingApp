@@ -106,7 +106,7 @@ public class BikeFragment extends Fragment implements View.OnClickListener, Home
                     return;
                 }
 
-                myBikeBrandModel.setText(response.body().getBrand() + response.body().getModel());
+                myBikeBrandModel.setText(response.body().getBrand() + " " + response.body().getModel());
                 myBikeLocation.setText(myDock.getLocation());
                 myBikeChargeLevel.setText(String.valueOf(response.body().getChargeLevel()));
             }

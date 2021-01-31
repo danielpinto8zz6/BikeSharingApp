@@ -46,7 +46,7 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR  | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         window.setStatusBarColor(getColor(R.color.DarkGreen));
         window.setNavigationBarColor(getColor(R.color.DarkGreen));
 

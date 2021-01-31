@@ -8,6 +8,10 @@ import com.bikesharing.app.R;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.format.DateUtils;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.bikesharing.app.data.Bike;
@@ -15,6 +19,7 @@ import com.bikesharing.app.data.Rental;
 import com.bikesharing.app.data.TravelEvent;
 import com.bikesharing.app.data.payment.Payment;
 import com.bikesharing.app.home.HomeActivity;
+import com.bikesharing.app.home.HomeFragment;
 import com.bikesharing.app.rest.HttpStatus;
 import com.bikesharing.app.rest.RestService;
 import com.bikesharing.app.rest.RestServiceManager;
@@ -25,6 +30,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.BaseMarkerOptions;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
@@ -55,12 +61,18 @@ public class LocationHistoryActivity extends AppCompatActivity implements OnMapR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        window.setStatusBarColor(getColor(R.color.DarkGreen));
+        window.setNavigationBarColor(getColor(R.color.White));
+
         // Mapbox access token is configured here. This needs to be called either in your application
         // object or in the same activity which contains the mapview.
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
         // This contains the MapView in XML and needs to be called after the access token is configured.
-        setContentView(R.layout.activity_travel);
+        setContentView(R.layout.activity_rental_history);
 
         SharedPreferences mySharedPreferences = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
         szToken = mySharedPreferences.getString("token", null);
@@ -82,8 +94,8 @@ public class LocationHistoryActivity extends AppCompatActivity implements OnMapR
         this.tvPaymentValue = findViewById(R.id.tvPaymentValue);
         this.tvBikeName = findViewById(R.id.tvBikeName);
 
-        tvStartDate.setText(this.myRental.getStartDate().toString());
-        tvEndDate.setText(this.myRental.getEndDate().toString());
+        tvStartDate.setText(DateUtils.formatDateTime(this, this.myRental.getStartDate().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_TIME));
+        tvEndDate.setText(DateUtils.formatDateTime(this, this.myRental.getEndDate().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_TIME));
 
         loadPayment();
         loadBike();
@@ -106,7 +118,7 @@ public class LocationHistoryActivity extends AppCompatActivity implements OnMapR
                 Bike bike = response.body();
 
                 if (bike != null) {
-                    tvBikeName.setText(bike.getBrand() + " " + bike.getModel() + " $");
+                    tvBikeName.setText(bike.getBrand() + " " + bike.getModel());
                 }
             }
 
@@ -134,7 +146,7 @@ public class LocationHistoryActivity extends AppCompatActivity implements OnMapR
                 Payment payment = response.body();
 
                 if (payment != null) {
-                    tvPaymentValue.setText(payment.getValue() + " $");
+                    tvPaymentValue.setText(payment.getValue() + " €");
                 }
             }
 
@@ -190,9 +202,15 @@ public class LocationHistoryActivity extends AppCompatActivity implements OnMapR
                     myLatLngs.add(myLatLng);
                 }
 
-                LatLngBounds latLngBounds = new LatLngBounds.Builder().includes(myLatLngs).build();
+                if (myLatLngs.size() > 0) {
 
-                myMapbox.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
+                    CameraPosition position = new CameraPosition.Builder()
+                            .target(new LatLng(myLatLngs.get(myLatLngs.size()-1).getLatitude(), myLatLngs.get(myLatLngs.size()-1).getLongitude())) // Sets the new camera position
+                            .zoom(15)
+                            .build();
+
+                    myMapbox.animateCamera(CameraUpdateFactory.newCameraPosition(position));
+                }
             }
 
             @Override
@@ -200,6 +218,13 @@ public class LocationHistoryActivity extends AppCompatActivity implements OnMapR
                 displayErrorLocationHistoryDialog(t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+        finish();
     }
 
     @Override

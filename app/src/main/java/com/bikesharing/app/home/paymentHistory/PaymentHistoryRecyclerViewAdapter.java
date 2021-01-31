@@ -1,6 +1,7 @@
 package com.bikesharing.app.home.paymentHistory;
 
 import android.content.Intent;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,7 +109,7 @@ public class PaymentHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Paym
 
         myOptionDock.myPaymentAmount.setText(String.valueOf(myPaymentHistoryDataset.getValue()));
         myOptionDock.myPaymentStatus.setText("Status: " + myPaymentHistoryDataset.getStatusString());
-        myOptionDock.myPaymentDate.setText("Date: " + myPaymentHistoryDataset.getTimestamp().toString());
+        myOptionDock.myPaymentDate.setText("Date: " + DateUtils.formatDateTime(myHomeActivity.getApplicationContext(), myPaymentHistoryDataset.getTimestamp().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_TIME));
     }
 
     // Return the size of your dataset (invoked by the layout manager)

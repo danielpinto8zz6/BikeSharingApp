@@ -1,6 +1,7 @@
 package com.bikesharing.app.home.rentalHistory;
 
 import android.content.Intent;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -180,8 +181,8 @@ public class RentalHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Renta
         myOptionDock.myRentalId.setText("Rental nº" + myRentalHistoryDataset.getId());
         try {
 
-            myOptionDock.myRentalStartDate.setText("Started: " + myRentalHistoryDataset.getStartDate().toString());
-            myOptionDock.myRentalEndDate.setText("Ended: " + myRentalHistoryDataset.getEndDate().toString());
+            myOptionDock.myRentalStartDate.setText("Started: " + DateUtils.formatDateTime(myHomeActivity.getApplicationContext(), myRentalHistoryDataset.getStartDate().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_TIME));
+            myOptionDock.myRentalEndDate.setText("Ended: " + DateUtils.formatDateTime(myHomeActivity.getApplicationContext(), myRentalHistoryDataset.getEndDate().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_TIME));
             myOptionDock.myRentalTime.setText("Time: " + findDifference(myRentalHistoryDataset.getStartDate(), myRentalHistoryDataset.getEndDate()));
 
         } catch (Exception e) {

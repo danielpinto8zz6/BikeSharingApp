@@ -25,6 +25,9 @@ import retrofit2.Response;
 
 import android.location.Location;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 // Classes needed to initialize the map
@@ -79,6 +82,12 @@ public class TravelActivity extends AppCompatActivity implements
         // Mapbox access token is configured here. This needs to be called either in your application
         // object or in the same activity which contains the mapview.
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        window.setStatusBarColor(getColor(R.color.DarkGreen));
+        window.setNavigationBarColor(getColor(R.color.White));
 
         setContentView(R.layout.activity_travel);
 
@@ -241,7 +250,7 @@ public class TravelActivity extends AppCompatActivity implements
                     return;
                 }
 
-                TravelEvent myTravelEvent = new TravelEvent(activity.nRentalId, location.getLongitude(), location.getLatitude(), new Date(location.getTime()));
+                TravelEvent myTravelEvent = new TravelEvent(activity.nRentalId, location.getLatitude(), location.getLongitude(), new Date(location.getTime()));
                 sendLocation(activity.szToken, myTravelEvent);
 
                 // Pass the new location to the Maps SDK's LocationComponent
